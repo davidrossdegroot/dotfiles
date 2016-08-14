@@ -16,6 +16,9 @@ cp .exports ~/.exports
 cp .dircolors ~/.dircolors
 cp .gitconfig ~/.gitconfig
 
+# Install Node... brew might be a better option... looking into it
+#curl "https://nodejs.org/dist/latest/node-${VERSION:-$(wget -qO- https://nodejs.org/dist/latest/ | sed -nE 's|.*>node-(.*)\.pkg</a>.*|\1|p')}.pkg" > "$HOME/Downloads/node-latest.pkg" && sudo installer -store -pkg "$HOME/Downloads/node-latest.pkg" -target "/"
+
 # Type `git open` to open the GitHub page or website for a repository.
 npm install -g git-open
 
