@@ -19,3 +19,7 @@ antigen theme robbyrussell
 
 # Tell antigen that you're done.
 antigen apply
+
+
+autoload -U compinit && compinit
+zmodload -i zsh/complist
