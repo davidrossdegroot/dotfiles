@@ -4,7 +4,8 @@ source /Users/Maclocal/apps/dotfiles/code/antigen/antigen.zsh
 antigen use oh-my-zsh
 
 # Bundles from the default repo (robbyrussell's oh-my-zsh).
-antigen bundle git
+plugins=(git)
+#antigen bundle git
 antigen bundle heroku
 antigen bundle pip
 antigen bundle lein
