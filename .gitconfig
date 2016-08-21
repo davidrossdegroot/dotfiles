@@ -90,3 +90,6 @@
 	prune = true
 [diff]
 	compactionHeuristic = true
+[user]
+	email = davidrossdegroot@gmail.com
+	nam = David De Groot
