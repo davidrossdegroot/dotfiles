@@ -15,7 +15,7 @@ antigen bundle command-not-found
 antigen bundle zsh-users/zsh-syntax-highlighting
 
 # Load the theme.
-antigen theme robbyrussell
+antigen theme fino-time
 
 # Tell antigen that you're done.
 antigen apply
@@ -23,3 +23,4 @@ antigen apply
 
 autoload -U compinit && compinit
 zmodload -i zsh/complist
+source $HOME/.aliases
