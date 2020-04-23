@@ -89,6 +89,55 @@ brew cask install iterm2
 brew cask install sublime-text
 brew cask install visual-studio-code
 
+# autocompletion for git branch names https://git-scm.com/book/en/v1/Git-Basics-Tips-and-Tricks
+curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
+
+# Type `git open` to open the GitHub page or website for a repository.
+npm install -g git-open
+
+# fancy listing of recent branches
+npm install -g git-recent
+
+# sexy git diffs
+npm install -g diff-so-fancy
+
+# trash as the safe `rm` alternative
+npm install --global trash-cli
+
+# more readable git diffs
+npm install --global diff-so-fancy
+
+
+# install better nanorc config
+# https://github.com/scopatz/nanorc
+curl https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh | sh
+
+# github.com/rupa/z   - oh how i love you
+git clone https://github.com/rupa/z.git ~/code/z
+# consider reusing your current .z file if possible. it's painful to rebuild :)
+# z is hooked up in .bash_profile
+
+
+# github.com/thebitguru/play-button-itunes-patch
+# disable itunes opening on media keys
+git clone https://github.com/thebitguru/play-button-itunes-patch ~/code/play-button-itunes-patch
+
+# change to bash 4 (installed by homebrew)
+BASHPATH=$(brew --prefix)/bin/bash
+#sudo echo $BASHPATH >> /etc/shells
+sudo bash -c 'echo $(brew --prefix)/bin/bash >> /etc/shells'
+chsh -s $BASHPATH # will set for current user only.
+echo $BASH_VERSION # should be 4.x not the old 3.2.X
+# Later, confirm iterm settings aren't conflicting.
+
+# install nvm (Node Version Nanager, https://github.com/nvm-sh/nvm)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+
+# Close any open System Preferences panes, to prevent them from overriding
+# settings we’re about to change
+osascript -e 'tell application "System Preferences" to quit'
+
+.osx
 
 git clone git://github.com/amix/vimrc.git ~/.vim_runtime
 sh ~/.vim_runtime/install_basic_vimrc.sh
