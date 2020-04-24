@@ -40,5 +40,7 @@ cd workspace
 git@github.com:davidrossdegroot/dotfiles.git
 ```
 
-At this point you can run a script like `.osx` or something. I'd review it first.
-
+At this point you can run a script like `.osx` by running 
+```
+bash .osx
+```
