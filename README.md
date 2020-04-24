@@ -44,3 +44,20 @@ At this point you can run a script like `.osx` by running
 ```
 bash .osx
 ```
+
+Then run 
+```
+./symlink-setup.sh
+```
+
+install oh-my-zsh
+```
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+install awesome vim
+```
+git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
+sh ~/.vim_runtime/install_awesome_vimrc.sh
+```
+
