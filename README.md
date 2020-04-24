@@ -61,3 +61,5 @@ git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
 sh ~/.vim_runtime/install_awesome_vimrc.sh
 ```
 
+I installed the https://marketplace.visualstudio.com/items?itemName=Shan.code-settings-sync vs code plugin
+and logged in and chose to use the gist where my settings were already saved in GH. Then I chose settings for the plugin and chose to autodownload the extensions. Then restarted VS Code.
