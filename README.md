@@ -1,6 +1,6 @@
 #  dotfiles
 
-Used this for macbook air 2020 during the great quarantine of 2020. That was redundant. Sorry. So I did a few things manually.
+Used this for macbook air 2020 during the great quarantine of 2020. That was redundant. Sorry. So I did a few things manually. I probably could have just followed the `setup-a-new-machine.sh` script which would have done things like get xcode.
 
 - [ ] Install chrome — login and do the sync
 - [ ] Download xcode from App Store
