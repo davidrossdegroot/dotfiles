@@ -1,12 +1,63 @@
 #  dotfiles
 
-* I maintain this repo as *my* dotfiles, but I'm keenly aware people are using it for theirs.
-* You're quite welcome to make suggestions, however I may decline if it's not of personal value to me.
-* If you're starting off consider forking [mathias](https://github.com/mathiasbynens/dotfiles/) or [alrra](https://github.com/alrra/dotfiles/). [paulmillr](https://github.com/paulmillr/dotfiles) and [gf3](https://github.com/gf3/dotfiles) also have great setups
+Used this for macbook air 2020 during the great quarantine of 2020. That was redundant. Sorry. So I did a few things manually.
 
-## Setup
-#### installing & using
+- [ ] Install chrome — login and do the sync
+- [ ] Download xcode from App Store
+- [ ] Change battery to show percentage 
+- [ ] Removed apps from dock that I don’t use
+- [ ] Change mouse scroll direction
+- [ ] Change mouse to touch to click
 
-* clone this repo. Doesn't have to be anywhere special.
-* Run `setup-a-new-machine.sh`
+Then I started to go through `setup-a-new-machine.sh` and chose some of the stuff that I wanted.
+
+Eventually, you'll want to setup a new key on your machine:
+```
+ ssh-keygen -t rsa -b 4096 -C "davidrossdegroot@gmail.com"
+ eval "$(ssh-agent -s)"
+```
+
+You can setup your ~/.ssh/config file to save the passphrase
+```
+Host *
+  AddKeysToAgent yes
+  IgnoreUnknown UseKeychain
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_rsa
+```
+Then add the key to your agent and it should save it to your keychain now.
+```
+ssh-add -K ~/.ssh/id_rsa
+```
+
+Go here: https://github.com/settings/ssh/new paste in the public one.
+
+Then clone this repo:
+
+```
+mkdir workspace
+cd workspace
+git@github.com:davidrossdegroot/dotfiles.git
+```
+
+At this point you can run a script like `.osx` by running 
+```
+bash .osx
+```
+
+Then run 
+```
+./symlink-setup.sh
+```
+
+install oh-my-zsh
+```
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+install awesome vim
+```
+git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
+sh ~/.vim_runtime/install_awesome_vimrc.sh
+```
 
