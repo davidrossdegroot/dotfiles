@@ -122,6 +122,24 @@ git clone https://github.com/rupa/z.git ~/code/z
 # disable itunes opening on media keys
 git clone https://github.com/thebitguru/play-button-itunes-patch ~/code/play-button-itunes-patch
 
+# install pyenv
+brew install pyenv
+# get latest stable python version
+pyenv install --list
+# install it
+pyenv install 3.8.2
+# use it locally -- I think all of the other path stuff should be already setup.
+pyenv local 3.8.2
+# verify with
+python --version
+
+# install pip
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python get-pip.py
+
+# install pygmatize for our lovely cat output
+pip install Pygments
+
 # change to bash 4 (installed by homebrew)
 BASHPATH=$(brew --prefix)/bin/bash
 #sudo echo $BASHPATH >> /etc/shells
@@ -130,6 +148,9 @@ chsh -s $BASHPATH # will set for current user only.
 echo $BASH_VERSION # should be 4.x not the old 3.2.X
 # Later, confirm iterm settings aren't conflicting.
 
+# setting up the sublime symlink
+ln -sf "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" ~/bin/subl
+
 # install nvm (Node Version Nanager, https://github.com/nvm-sh/nvm)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 
@@ -137,28 +158,26 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 # settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
 
-.osx
-
 git clone git://github.com/amix/vimrc.git ~/.vim_runtime
 sh ~/.vim_runtime/install_basic_vimrc.sh
-
-# copy the files I want over to home directory. Symlinks maybe better option, but don't have time (or want) to research right now.
-
-cp vim_runtime/my_configs.vim ~/vim_runtime/my_configs.vim
-cp .bash_prompt ~/.bash_prompt
-cp .bash_profile ~/.bash_profile
-cp .aliases ~/.aliases
-cp -R fish/ ~/fish
-cp .functions ~/.functions
-cp .exports ~/.exports
-cp .dircolors ~/.dircolors
-cp .gitconfig ~/.gitconfig
 
 # Install Node... brew might be a better option... looking into it
 #curl "https://nodejs.org/dist/latest/node-${VERSION:-$(wget -qO- https://nodejs.org/dist/latest/ | sed -nE 's|.*>node-(.*)\.pkg</a>.*|\1|p')}.pkg" > "$HOME/Downloads/node-latest.pkg" && sudo installer -store -pkg "$HOME/Downloads/node-latest.pkg" -target "/"
 
 # Type `git open` to open the GitHub page or website for a repository.
 npm install -g git-open
+# faster git server communication.
+# like a LOT faster. https://opensource.googleblog.com/2018/05/introducing-git-protocol-version-2.html
+git config protocol.version 2
+
+
+sh .osx
+
+# setup and run Rescuetime!
+
+###
+##############################################################################################################
+
 
 # fancy listing of recent branches
 npm install -g git-recent
@@ -169,6 +188,5 @@ npm install -g diff-so-fancy
 # trash as the safe `rm` alternative
 npm install --global trash-cli
 
-
-
-source ~/.bash_profile
+# symlink it up!
+./symlink-setup.sh
