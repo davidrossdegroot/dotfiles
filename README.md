@@ -9,7 +9,7 @@ Used this for macbook air 2020 during the great quarantine of 2020. That was red
 - [ ] Change mouse scroll direction
 - [ ] Change mouse to touch to click
 
-Then I started to go through `setup-a-new-machine.sh` and chose some of the stuff that I wanted.
+Then I started to go through `setup-a-new-machine.sh` and `brew.sh` and installed some of the stuff that I wanted. 
 
 Eventually, you'll want to setup a new key on your machine:
 ```
