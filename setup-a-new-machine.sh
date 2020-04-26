@@ -182,18 +182,23 @@ git clone https://github.com/rupa/z.git ~/code/z
 # disable itunes opening on media keys
 git clone https://github.com/thebitguru/play-button-itunes-patch ~/code/play-button-itunes-patch
 
+# install pyenv
+brew install pyenv
+# get latest stable python version
+pyenv install --list
+# install it
+pyenv install 3.8.2
+# use it locally -- I think all of the other path stuff should be already setup.
+pyenv local 3.8.2
+# verify with
+python --version
 
-# my magic photobooth symlink -> dropbox. I love it.
-# 	 + first move Photo Booth folder out of Pictures
-# 	 + then start Photo Booth. It'll ask where to put the library.
-# 	 + put it in Dropbox/public
-# 	* Now… you can record photobooth videos quickly and they upload to dropbox DURING RECORDING
-# 	* then you grab public URL and send off your video message in a heartbeat.
+# install pip
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python get-pip.py
 
-
-# for the c alias (syntax highlighted cat)
-sudo easy_install Pygments
-
+# install pygmatize for our lovely cat output
+pip install Pygments
 
 # change to bash 4 (installed by homebrew)
 BASHPATH=$(brew --prefix)/bin/bash
@@ -204,9 +209,6 @@ echo $BASH_VERSION # should be 4.x not the old 3.2.X
 # Later, confirm iterm settings aren't conflicting.
 
 
-# iterm with more margin! http://hackr.it/articles/prettier-gutter-in-iterm-2/
-#   (admittedly not as easy to maintain)
-
 
 # setting up the sublime symlink
 ln -sf "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" ~/bin/subl
@@ -215,53 +217,11 @@ ln -sf "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" ~/bin/su
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 
 
-###
-##############################################################################################################
-
-
-## Chromium hacking
-
-# improve perf of git inside of chromium checkout
-
-# read https://chromium.googlesource.com/chromium/src/+/master/docs/mac_build_instructions.md
-
-# default is (257*1024)
-sudo sysctl kern.maxvnodes=$((512*1024))
-echo kern.maxvnodes=$((512*1024)) | sudo tee -a /etc/sysctl.conf
-
-# https://facebook.github.io/watchman/docs/install.html#mac-os-file-descriptor-limits
-sudo sysctl -w kern.maxfiles=$((10*1024*1024))
-sudo sysctl -w kern.maxfilesperproc=$((1024*1024))
-echo kern.maxfiles=$((10*1024*1024)) | sudo tee -a /etc/sysctl.conf
-echo kern.maxfilesperproc=$((1024*1024)) | sudo tee -a /etc/sysctl.conf
-
-
-# speed up git status (to run only in chromium repo)
-git config status.showuntrackedfiles no
-git update-index --untracked-cache
-
 # faster git server communication.
 # like a LOT faster. https://opensource.googleblog.com/2018/05/introducing-git-protocol-version-2.html
 git config protocol.version 2
 
-# see also "A Chromium Compiling Setup for DevTools Hackers"
-# https://gist.github.com/paulirish/2d84a6db1b41b4020685
 
-# also this unrelated thing
-# git config user.email "xxxx@chromium.org"
-
-
-##############################################################################################################
-### remaining configuration
-###
-
-# go read mathias, paulmillr, gf3, alraa's dotfiles to see what's worth stealing.
-
-# prezto and antigen communties also have great stuff
-#   github.com/sorin-ionescu/prezto/blob/master/modules/utility/init.zsh
-
-# set up osx defaults
-#   maybe something else in here https://github.com/hjuutilainen/dotfiles/blob/master/bin/osx-user-defaults.sh
 sh .osx
 
 # setup and run Rescuetime!
@@ -280,8 +240,3 @@ sh .osx
 
 # symlink it up!
 ./symlink-setup.sh
-
-# add manual symlink for .ssh/config and probably .config/fish
-
-###
-##############################################################################################################
