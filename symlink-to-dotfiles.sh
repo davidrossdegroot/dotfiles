@@ -4,5 +4,5 @@ echo "Type the directory or file relative to the HOME directory. E.g. .functions
 
 read file
 
-mv ~/$file ~/workspace/didit-dotfiles/$file
-ln -s /Users/drdegroo/workspace/didit-dotfiles/$file /Users/drdegroo/$file
+mv ~/$file ~/workspace/dotfiles/$file
+ln -s /Users/davidrdegroot/workspace/dotfiles/$file /Users/davidrdegroot/$file
