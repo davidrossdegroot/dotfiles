@@ -7,6 +7,9 @@
 #- [ ] Change mouse scroll direction
 #- [ ] Change mouse to touch to click
 
+# fix xcode first (you can look at paul irish's repo to get the full script to install xcode, but app store + this worked for me too.
+sudo xcode-select --switch /Applications/Xcode.app
+
 #install homebrew https://brew.sh/ 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
