@@ -77,6 +77,7 @@ mkdir ~/bin
 # symlink each to the dotfiles repo so anything changed in here is updated in the repo
 # TODO: make this a loop for each file in that directory.
 ln -s /Users/daviddegroot/workspace/dotfiles/bin/symlink-to-dotfiles.sh /Users/daviddegroot/bin/symlink-to-dotfiles.sh
+chmod +x bin/*.sh
 ```
 
 

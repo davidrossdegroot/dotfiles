@@ -1,0 +1,4 @@
+export PATH="$PATH:$HOME/.rvm/bin:$HOME/bin"
+export PYENV_ROOT="$HOME/.pyenv"
+export NVM_DIR=~/.nvm
+
