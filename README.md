@@ -69,13 +69,14 @@ $(brew --prefix)/opt/fzf/install
 I installed the https://marketplace.visualstudio.com/items?itemName=Shan.code-settings-sync vs code plugin
 and logged in and chose to use the gist where my settings were already saved in GH. Then I chose settings for the plugin and chose to autodownload the extensions. Then restarted VS Code.
 
+Run the "Add code to PATH" command in vscode.
 
 ### bin folder setup
 ```
 # create the necessary home directory bin folder
 mkdir ~/bin
 # symlink each to the dotfiles repo so anything changed in here is updated in the repo
-# TODO: make this a loop for each file in that directory.
+# TODO: make this a loop for each file in that directory. Add to symlink setup.
 ln -s /Users/daviddegroot/workspace/dotfiles/bin/symlink-to-dotfiles.sh /Users/daviddegroot/bin/symlink-to-dotfiles.sh
 chmod +x bin/*.sh
 ```
