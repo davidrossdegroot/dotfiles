@@ -42,7 +42,7 @@ alias c='pygmentize -O style=monokai -f console256 -g'
 ###
 # GIT STUFF
 
-alias pr="hub pull-request -b develop"
+alias pr="pull-request.sh"
 alias push="git push"
 
 # Undo a `git push`
