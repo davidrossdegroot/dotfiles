@@ -10,6 +10,11 @@ Used this for macbook air 2020 during the great quarantine of 2020. That was red
 - [ ] Change mouse scroll direction
 - [ ] Change mouse to touch to click
 
+install oh-my-zsh
+```
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
 Then I started to go through `setup-a-new-machine.sh` and `brew.sh` and installed some of the stuff that I wanted. 
 
 Eventually, you'll want to setup a new key on your machine:
@@ -49,11 +54,6 @@ bash .osx
 Then run 
 ```
 ./symlink-setup.sh
-```
-
-install oh-my-zsh
-```
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
 install awesome vim
