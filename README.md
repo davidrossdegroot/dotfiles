@@ -10,17 +10,22 @@ Used this for macbook air 2020 during the great quarantine of 2020 and for mac m
 - [ ] Change mouse scroll direction
 - [ ] Change mouse to touch to click
 
-install oh-my-zsh
+### install oh-my-zsh
 ```
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
+You can google these plugins and do their git installations for oh-my-zsh `zsh-autosuggestions zsh-fzf-history-search`
+
+### Clone this repo
+
 I'd recommend cloning this repo because each time I go through it, I kind of change stuff so you can keep this README open and just update it as you go along.
 
-Go through `setup-a-new-machine.sh` and `brew.sh` and installed some of the stuff that I wanted.
+Go through `setup-a-new-machine.sh` and `brew.sh` and installed some of the stuff that I wanted manually. 
 
 Get the ctrl r key binding
 - https://github.com/joshskidmore/zsh-fzf-history-search
 
+One thing you could do too which might save some time is to run the move-in.sh script which will set up all the symlinks for you. 
 
 ### bin folder setup
 ```
