@@ -1,6 +1,5 @@
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home
-export PATH=$JAVA_HOME/bin:$PATH
-export PATH="$PATH:$HOME/.rvm/bin:$HOME/bin"
-export PYENV_ROOT="$HOME/.pyenv"
-export NVM_DIR=~/.nvm
-
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/Users/daviddegroot/bin:$PATH"
+export NVM_DIR="$HOME/.nvm"
+# This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh" 
