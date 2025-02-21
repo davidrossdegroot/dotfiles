@@ -25,7 +25,7 @@ Go through `setup-a-new-machine.sh` and `brew.sh` and installed some of the stuf
 Get the ctrl r key binding
 - https://github.com/joshskidmore/zsh-fzf-history-search
 
-One thing you could do too which might save some time is to run the move-in.sh script which will set up all the symlinks for you. 
+One thing you could do too which might save some time is to run the move-in.sh script which will set up all the symlinks for you. Or you can manually copy these over (see #bin-folder-setup)
 
 ### bin folder setup
 ```
