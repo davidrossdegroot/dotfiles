@@ -1,0 +1,44 @@
+temp_dirs/undodir/*
+sources_non_forked/ack.vim/.netrwhist
+temp_dirs/yankring_history_v2.txt
+sources_forked/yankring/doc/tags
+sources_non_forked/tlib/doc/tags
+sources_non_forked/ctrlp.vim/doc/tags*
+my_configs.vim
+tags
+.DS_Store
+.code-workspace.code-workspace
+
+# working files
+.vim/viminfo
+.vim/swaps/*
+.vim/undo
+
+# git credential file
+.gitconfig.local
+
+
+
+
+# Folder view configuration files
+.DS_Store
+Desktop.ini
+
+# Thumbnail cache files
+._*
+Thumbs.db
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+# Compiled Python files
+*.pyc
+
+# fish shell
+fishd.*
+.config/fish/fish_history
+fish/fish_history
+
+# random
+shilocation

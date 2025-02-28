@@ -1,0 +1,9 @@
+# for bash-completion  
+[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+
+# ensure chruby is sourced
+source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
+
+# use current ruby
+chruby 3.4.1
+

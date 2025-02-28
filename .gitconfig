@@ -1,0 +1,20 @@
+[user]
+	name = David De Groot
+	email = davidrossdegroot@gmail.com
+[pull]
+	rebase = true
+[alias]
+	c = commit -am
+	fpush = push --force
+	tpush = push  # typo: leftover t from git
+	s = status
+	ts = status # I do the `gi ts` typo all the time
+	sclone = clone --depth=1
+	amend = commit --amend --all --no-edit
+	undocommit = reset HEAD~
+	hreset = reset --hard
+	co = checkout
+	df = diff --color --color-words --abbrev
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit
+	cherrypick = cherry-pick
+	cp = cherry-pick

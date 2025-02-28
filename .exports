@@ -1,0 +1,10 @@
+# homebrew
+export PATH="/opt/homebrew/bin:$PATH"
+# my bin directory
+export PATH="/Users/daviddegroot/bin:$PATH"
+# vs code
+export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+# not sure why i need this but brew said so
+export NVM_DIR="$HOME/.nvm"
+# This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh" 
