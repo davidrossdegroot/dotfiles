@@ -38,5 +38,3 @@ cp dotfiles/* ~/bin/
 ```
 This symlink file is pretty nice too for moving the files to the dotfiles repo and symlinking them
 `bin/symlinkToDotfilesRepo.sh`
-
-
