@@ -1,0 +1,32 @@
+#!/bin/sh
+# Prompt the user for the new Ruby version
+read -p "Enter new Ruby version: " ruby_version
+
+# Determine the rubies installation directory.
+# Defaults to $HOME/.rubies if RUBIES_INSTALL_ROOT is not set.
+ruby_install_dir="${RUBIES_INSTALL_ROOT:-$HOME/.rubies}"
+
+# Check if the specified Ruby version is already installed
+# It checks for either directory structure: "<version>" or "ruby-<version>"
+if [ -d "$ruby_install_dir/$ruby_version" ] || [ -d "$ruby_install_dir/ruby-$ruby_version" ]; then
+  echo "Ruby version $ruby_version is already installed in $ruby_install_dir/$ruby_version. Skipping installation."
+else
+  echo "Installing Ruby version $ruby_version..."
+  ruby-install "$ruby_version"
+  if [ $? -ne 0 ]; then
+    echo "Ruby installation failed. Exiting."
+    exit 1
+  fi
+fi
+
+# Update the ~/.extras file to use the new Ruby version.
+# This command looks for a line starting with "# chruby" and replaces it with "chruby <ruby_version>".
+# Use a temporary file to perform the sed substitution
+tmpfile=$(mktemp)
+if sed -E "s|^chruby[[:space:]]+.*$|chruby 3.4.2|" ~/.extras > "$tmpfile"; then
+  mv "$tmpfile" ~/.extras
+  echo "Updated ~/.extras to use: chruby $ruby_version"
+else
+  echo "Failed to update ~/.extras"
+  rm "$tmpfile"
+fi
