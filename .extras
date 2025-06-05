@@ -5,5 +5,5 @@
 source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
 
 # use current ruby
-chruby 3.4.2
+chruby 3.4.4
 
