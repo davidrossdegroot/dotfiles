@@ -1,12 +1,24 @@
 #!/bin/bash
 
-# Create a new directory and enter it
-function md() {
-	mkdir -p "$@" && cd "$@"
-}
+# gbs - "Git Branch Switch" helper
+# This function checks if a given Git branch exists.
+# - If it exists, it switches to it and prints a warning.
+# - If it doesn't exist, it creates and switches to the new branch.
+# Usage: gbs <branch-name>
+# Example: gbs feature/login-page
 
+gbs() {
+  if [ -z "$1" ]; then
+    echo "Usage: gbs <branch-name>"
+    return 1
+  fi
 
-# find shorthand
-function f() {
-	find . -name "$1" 2>&1 | grep -v 'Permission denied'
+  BRANCH="$1"
+  if git rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
+    echo "⚠️ Branch '$BRANCH' already exists. Switching to it..."
+    git switch "$BRANCH"
+  else
+    echo "🚀 Creating and switching to new branch '$BRANCH'"
+    git switch -c "$BRANCH"
+  fi
 }
