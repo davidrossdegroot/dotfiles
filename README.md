@@ -38,3 +38,15 @@ cp dotfiles/* ~/bin/
 ```
 This symlink file is pretty nice too for moving the files to the dotfiles repo and symlinking them
 `bin/symlinkToDotfilesRepo.sh`
+
+### Postgres
+Install postgres using brew. This should let you use postgres for a rails app for example.
+```
+brew install postgresql@16
+#  for some reason mac M3s or whatever need this
+brew install libpq
+# this tells bundler that you want to use this special config (globally)
+bundle config --global build.pg --with-pg-config=/opt/homebrew/opt/libpq/bin/pg_config
+# this will ensure it starts when you start your computer
+brew services start postgresql@16
+```
