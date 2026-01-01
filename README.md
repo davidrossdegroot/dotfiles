@@ -11,6 +11,7 @@ Used this for macbook air 2020 during the great quarantine of 2020 and for mac m
 - [ ] Change mouse to touch to click
 - [ ] Download JetBrains Mono font https://www.jetbrains.com/lp/mono/  -> expand the folder and then add it to Documents folder
 - [ ] Open FontBook -> File -> Add Fonts to current user.
+- [ ] install homebrew https://brew.sh/ 
 
 ### install oh-my-zsh
 ```

@@ -7,6 +7,13 @@
 #- [ ] Change mouse scroll direction
 #- [ ] Change mouse to touch to click
 
+# ruby installs 
+# https://github.com/postmodern/ruby-install?tab=readme-ov-file#install 
+#
+# and https://github.com/postmodern/chruby?tab=readme-ov-file#install 
+
+
+## brew stuff
 brew update
 
 # Upgrade any already-installed formulae
@@ -35,6 +42,7 @@ brew install grep
 brew install fzf # uses ctrl+r for command history searching
 
 brew install ranger # not sure if i'll use it but like file explorer view
+brew install pyenv # used to install python. pyenv install I think should work after this is installed
 
 
 # fancy listing of recent branches
