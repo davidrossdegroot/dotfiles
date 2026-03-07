@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Define the dotfiles directory
-DOTFILES_DIR="$HOME/workspace/dotfiles"
+# Define the dotfiles directory as the script location.
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Ensure the dotfiles directory exists
 if [[ ! -d "$DOTFILES_DIR" ]]; then
@@ -11,8 +12,10 @@ fi
 
 echo "Restoring symlinks from $DOTFILES_DIR to $HOME..."
 
-# Find all files in dotfiles repo, excluding .git and .gitignore
-find "$DOTFILES_DIR" -type f ! -name ".gitignore" | while read -r FILE; do
+# Find all files in dotfiles repo, excluding git internals.
+find "$DOTFILES_DIR" -type f \
+  ! -path "$DOTFILES_DIR/.git/*" \
+  ! -name ".gitignore" | while read -r FILE; do
   # Get the relative path from dotfiles directory
   RELATIVE_PATH="${FILE#$DOTFILES_DIR/}"
   
@@ -21,6 +24,12 @@ find "$DOTFILES_DIR" -type f ! -name ".gitignore" | while read -r FILE; do
 
   # Ensure the target directory exists
   mkdir -p "$(dirname "$TARGET_PATH")"
+
+  # Skip if already linked correctly.
+  if [[ -L "$TARGET_PATH" ]] && [[ "$(readlink "$TARGET_PATH")" == "$FILE" ]]; then
+    echo "Already linked: $TARGET_PATH"
+    continue
+  fi
 
   # Check if the target file already exists
   if [[ -e "$TARGET_PATH" || -L "$TARGET_PATH" ]]; then

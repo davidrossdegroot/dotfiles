@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 # pick out what you want to do from here
 
 #- [ ] Install chrome — login and do the sync
@@ -14,6 +17,11 @@
 
 
 ## brew stuff
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is not installed. Install it first: https://brew.sh/"
+  exit 1
+fi
+
 brew update
 
 # Upgrade any already-installed formulae
@@ -56,4 +64,4 @@ npm install --global trash-cli
 
 
 # symlink it up!
-./symlink-setup.sh
+"$(dirname "$0")/move-in.sh"
