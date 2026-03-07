@@ -1,5 +1,2 @@
 # for bash-completion  
 [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-
-# use current ruby
-command -v chruby >/dev/null 2>&1 && chruby 4.0.1
