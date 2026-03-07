@@ -5,7 +5,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 
 # load special files
-for file in ~/.{extras,bash_prompt,exports,aliases,functions}; do
+for file in ~/.{exports,aliases,functions,extras,bash_prompt}; do
     [ -r "$file" ] && source "$file"
 done
 
