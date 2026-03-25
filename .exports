@@ -28,7 +28,5 @@ eval "$(pyenv init - zsh)"
 # chruby (if installed with Homebrew)
 [ -r "$HOMEBREW_PREFIX/opt/chruby/share/chruby/chruby.sh" ] && source "$HOMEBREW_PREFIX/opt/chruby/share/chruby/chruby.sh"
 [ -r "$HOMEBREW_PREFIX/opt/chruby/share/chruby/auto.sh" ] && source "$HOMEBREW_PREFIX/opt/chruby/share/chruby/auto.sh"
-# default ruby
-command -v chruby >/dev/null 2>&1 && chruby 4.0.1
 
 export PATH="$HOME/.local/bin:$PATH"
