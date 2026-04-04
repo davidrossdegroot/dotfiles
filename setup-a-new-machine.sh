@@ -1,67 +1,46 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# pick out what you want to do from here
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-#- [ ] Install chrome — login and do the sync
-#- [ ] Download xcode from App Store
-#- [ ] Change battery to show percentage 
-#- [ ] Removed apps from dock that I don’t use. make dock nicer add terminal to dock etc.
-#- [ ] Change mouse scroll direction
-#- [ ] Change mouse to touch to click
-
-# ruby installs 
-# https://github.com/postmodern/ruby-install?tab=readme-ov-file#install 
-#
-# and https://github.com/postmodern/chruby?tab=readme-ov-file#install 
-
-
-## brew stuff
 if ! command -v brew >/dev/null 2>&1; then
   echo "Homebrew is not installed. Install it first: https://brew.sh/"
   exit 1
 fi
 
-brew update
+"$SCRIPT_DIR/brew.sh" "$@"
 
-# Upgrade any already-installed formulae
-brew upgrade
+cat <<'EOF'
 
+Machine setup checklist:
 
-# GNU core utilities (those that come with OS X are outdated)
-brew install coreutils
-brew install moreutils
-# GNU `find`, `locate`, `updatedb`, and `xargs`, `g`-prefixed
-brew install findutils
-# GNU `sed`, overwriting the built-in `sed`
-brew install gnu-sed
-# note to self -- update aliases with sed='gsed'
+- Change battery to show percentage
+- Fix Finder sidebar and other Finder preferences
+- Remove apps from the Dock that you do not use
+- Change mouse scroll direction if needed
+- Change mouse to tap to click if needed
+- Download JetBrains Mono and add it in Font Book
 
-brew install bash-completion
+Shell setup:
 
-# Install wget with IRI support
-brew install wget
+- Install oh-my-zsh: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+- Install the zsh plugins you want, for example `zsh-autosuggestions`
+- Open a new shell and run `nvm install --lts`
 
-# Install more recent versions of some OS X tools
-brew install vim
-brew install nano
-brew install grep
+Repo-managed files:
 
-brew install fzf # uses ctrl+r for command history searching
+- Review `move-in.sh` before running it. It is still broad and will symlink repo files into `$HOME`.
+- Copy helper scripts into `~/bin` if you want them available on your PATH: `mkdir -p ~/bin && cp bin/* ~/bin/`
 
-brew install ranger # not sure if i'll use it but like file explorer view
-brew install pyenv # used to install python. pyenv install I think should work after this is installed
+Optional Postgres setup:
 
+- brew install postgresql@16
+- brew install libpq
+- bundle config --global build.pg --with-pg-config="$(brew --prefix libpq)/bin/pg_config"
+- brew services start postgresql@16
 
-# fancy listing of recent branches
-npm install -g git-recent
+Ruby references:
 
-# sexy git diffs
-npm install -g diff-so-fancy
-
-# trash as the safe `rm` alternative
-npm install --global trash-cli
-
-
-# symlink it up!
-"$(dirname "$0")/move-in.sh"
+- https://github.com/postmodern/ruby-install
+- https://github.com/postmodern/chruby
+EOF
