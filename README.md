@@ -19,13 +19,19 @@ xcode-select --install
 ./setup-a-new-machine.sh
 ```
 
+If you also want the optional CLI extras (`stow`, `tmux`, `zoxide`, `btop`, `ncdu`, and `dockutil`), use:
+
+```bash
+INSTALL_OPTIONAL_TOOLS=1 ./setup-a-new-machine.sh
+```
+
 If you are not signed in to the App Store yet, you can skip those installs for now:
 
 ```bash
 SKIP_APP_STORE=1 ./setup-a-new-machine.sh
 ```
 
-The package source of truth is `Brewfile`. `setup-a-new-machine.sh` is the human-friendly entrypoint, and `brew.sh` is the package-only helper that runs `brew bundle`.
+The package source of truth is `Brewfile` for the default bootstrap and `Brewfile.optional` for opt-in extras. `setup-a-new-machine.sh` is the human-friendly entrypoint, and `brew.sh` is the package-only helper that runs `brew bundle`.
 
 This bootstrap assumes macOS or Xcode Command Line Tools already provide:
 
@@ -37,7 +43,7 @@ Those are intentionally not installed from Homebrew.
 
 ## Which Script Does What
 
-`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install CLI tools, casks, and optional Mac App Store apps. It does not symlink repo files into `$HOME`.
+`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
 
 `./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages, and it symlinks every file in `bin/` into `~/bin`. It does not install Homebrew packages, casks, or App Store apps.
 
@@ -51,13 +57,36 @@ If you are setting up a fresh machine, the intended order is:
 Package installs are managed through `brew bundle` and include:
 
 - Homebrew formulae from `Brewfile`
+- Optional Homebrew formulae from `Brewfile.optional` when `--optional-tools` or `INSTALL_OPTIONAL_TOOLS=1` is used
 - GUI apps through Homebrew Cask
 - Mac App Store apps through `mas`
 
+Required/default formulae now include the core Unix tooling this repo expects on every machine:
+
+- `bat` for syntax-highlighted file previews
+- `direnv` for automatically loading per-project environment variables from `.envrc`
+- `fd` for fast file and directory discovery
+- `gh` for GitHub workflows from the terminal
+- `jq` for querying and transforming JSON
+- `ripgrep` for fast recursive text search with `rg`
+- `shellcheck` for linting shell scripts
+- `shfmt` for formatting shell scripts
+
 The default formula list also includes local Postgres support through:
 
-- `postgresql@16`
-- `libpq`
+- `postgresql@16` for a local Postgres server
+- `libpq` for client tools such as `psql` and `pg_config`
+
+Optional CLI extras are kept separate so the default bootstrap stays lean:
+
+- `btop` for an interactive system monitor
+- `dockutil` for scripting Dock changes
+- `ncdu` for browsing disk usage from the terminal
+- `stow` for managing symlink-based dotfiles layouts
+- `tmux` for persistent terminal sessions and panes
+- `zoxide` for smarter directory jumping based on where you use `cd`
+
+This repo still uses `./move-in.sh` for its curated symlink flow, so `stow` is installed only as an extra tool rather than replacing that script outright.
 
 Notable cask installs include:
 
@@ -107,10 +136,25 @@ Mac preferences that still need to be done manually:
 
 - Show battery percentage
 - Fix Finder sidebar and other Finder preferences
-- Remove apps from the Dock that you do not use
 - Change mouse scroll direction
 - Change mouse tap-to-click
 - Download JetBrains Mono from <https://www.jetbrains.com/lp/mono/> and add it in Font Book
+
+If you installed optional tools, the Dock helpers can save and restore the repo's Dock layout with `dockutil`:
+
+```bash
+./bin/capture-dock
+./bin/setup-dock
+```
+
+`./bin/capture-dock` snapshots your current Dock into `dock/layout.sh`. `./bin/setup-dock` clears the Dock and recreates it from that saved layout, including right-side folder stacks such as `Downloads`.
+
+Shell quality-of-life notes:
+
+- `direnv` is hooked automatically from `.zshrc` when it is installed, so entering a directory can load or unload project-specific environment variables
+- `zoxide` is also hooked automatically when optional tools are installed, so `z foo` jumps to frequently used directories without manual bookmarks
+- interactive shells wrap `brew install` and prompt you to review `Brewfile` or `Brewfile.optional` after successful installs
+- the old `ag` alias has been removed in favor of native `rg` and `fd`
 
 ## Dotfiles And Helper Scripts
 
@@ -125,15 +169,19 @@ Run `./move-in.sh` to link the dotfiles this repo intentionally manages in `$HOM
 
 It also symlinks every file in this repo's `bin/` directory into `~/bin`.
 
-It does not link repo documentation, bootstrap scripts, or `Brewfile` by default.
+It does not link repo documentation, bootstrap scripts, or `Brewfile*` by default.
 
 That means these helper scripts are available on your `PATH` as symlinks from `~/bin`:
 
 - `add-ruby`
+- `capture-dock`
 - `pull-request.sh`
+- `setup-dock`
 - `symlinkToDotfilesRepo.sh`
 
 `bin/symlinkToDotfilesRepo.sh` is useful for moving files into the dotfiles repo and replacing them with symlinks.
+`bin/capture-dock` snapshots the current Dock into `dock/layout.sh`.
+`bin/setup-dock` uses `dockutil` to recreate the Dock from `dock/layout.sh`.
 
 ## Postgres
 

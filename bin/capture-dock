@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v dockutil >/dev/null 2>&1; then
+  echo "dockutil is required. Install optional tools with './brew.sh install --optional-tools' first."
+  exit 1
+fi
+
+if ! command -v xmllint >/dev/null 2>&1; then
+  echo "xmllint is required."
+  exit 1
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+TARGET_FILE="${1:-$DOTFILES_DIR/dock/layout.sh}"
+PLIST_PATH="$HOME/Library/Preferences/com.apple.dock.plist"
+
+if [[ ! -f "$PLIST_PATH" ]]; then
+  echo "Dock plist not found at $PLIST_PATH"
+  exit 1
+fi
+
+mkdir -p "$(dirname "$TARGET_FILE")"
+
+decode_file_url() {
+  local url="$1"
+  local decoded_path
+
+  if [[ "$url" == file://* ]]; then
+    url="${url#file://}"
+    decoded_path="$(printf '%b' "${url//%/\\x}")"
+    if [[ "$decoded_path" != "/" ]]; then
+      decoded_path="${decoded_path%/}"
+    fi
+    printf '%s' "$decoded_path"
+  else
+    printf '%s' "$url"
+  fi
+}
+
+quote_shell_path() {
+  local path="$1"
+  local suffix
+
+  if [[ "$path" == "$HOME"* ]]; then
+    suffix="${path#"$HOME"}"
+    suffix="${suffix//\\/\\\\}"
+    suffix="${suffix//\"/\\\"}"
+    printf '"%s%s"' "\$HOME" "$suffix"
+  else
+    path="${path//\\/\\\\}"
+    path="${path//\"/\\\"}"
+    printf '"%s"' "$path"
+  fi
+}
+
+quote_shell_other_item() {
+  local path="$1"
+  local view="$2"
+  local display="$3"
+  local sort="$4"
+  local suffix
+
+  if [[ "$path" == "$HOME"* ]]; then
+    suffix="${path#"$HOME"}"
+    suffix="${suffix//\\/\\\\}"
+    suffix="${suffix//\"/\\\"}"
+    printf '"%s%s|%s|%s|%s"' "\$HOME" "$suffix" "$view" "$display" "$sort"
+  else
+    path="${path//\\/\\\\}"
+    path="${path//\"/\\\"}"
+    printf '"%s|%s|%s|%s"' "$path" "$view" "$display" "$sort"
+  fi
+}
+
+xml_string() {
+  local xpath="$1"
+  local xml_file="$2"
+
+  xmllint --xpath "string($xpath)" "$xml_file" 2>/dev/null || true
+}
+
+map_display() {
+  case "${1:-0}" in
+    1) printf 'folder' ;;
+    *) printf 'stack' ;;
+  esac
+}
+
+map_view() {
+  case "${1:-0}" in
+    0) printf 'auto' ;;
+    2) printf 'grid' ;;
+    3) printf 'list' ;;
+    *) printf 'fan' ;;
+  esac
+}
+
+map_sort() {
+  case "${1:-1}" in
+    1) printf 'name' ;;
+    3) printf 'datemodified' ;;
+    4) printf 'datecreated' ;;
+    5) printf 'kind' ;;
+    *) printf 'dateadded' ;;
+  esac
+}
+
+apps=()
+while IFS=$'\t' read -r _label url section _plist _bundle_id; do
+  [[ -n "${url:-}" ]] || continue
+  [[ "$section" == "persistentApps" ]] || continue
+  apps+=("$(decode_file_url "$url")")
+done < <(dockutil --list)
+
+others_xml="$(mktemp)"
+tmpfile="$(mktemp)"
+trap 'rm -f "$others_xml" "$tmpfile"' EXIT
+
+others_count=0
+if plutil -extract persistent-others xml1 -o "$others_xml" "$PLIST_PATH" >/dev/null 2>&1; then
+  others_count="$(xmllint --xpath 'count(/plist/array/dict)' "$others_xml" 2>/dev/null || printf '0')"
+  others_count="${others_count%.*}"
+fi
+
+{
+  printf '# Captured from this machine'\''s Dock.\n'
+  printf '# Refresh with: ./bin/capture-dock\n\n'
+  printf 'DOCK_APPS=(\n'
+  for app in "${apps[@]}"; do
+    printf '  '
+    quote_shell_path "$app"
+    printf '\n'
+  done
+  printf ')\n\n'
+
+  printf '# Format: path|view|display|sort\n'
+  printf 'DOCK_OTHERS=(\n'
+  if [[ "$others_count" -gt 0 ]]; then
+    for ((i = 1; i <= others_count; i++)); do
+      base_xpath="/plist/array/dict[$i]/key[.='tile-data']/following-sibling::dict[1]"
+      path_url="$(xml_string "$base_xpath/key[.='file-data']/following-sibling::dict[1]/key[.='_CFURLString']/following-sibling::string[1]" "$others_xml")"
+      path="$(decode_file_url "$path_url")"
+      view="$(map_view "$(xml_string "$base_xpath/key[.='showas']/following-sibling::integer[1]" "$others_xml")")"
+      display="$(map_display "$(xml_string "$base_xpath/key[.='displayas']/following-sibling::integer[1]" "$others_xml")")"
+      sort="$(map_sort "$(xml_string "$base_xpath/key[.='arrangement']/following-sibling::integer[1]" "$others_xml")")"
+
+      printf '  '
+      quote_shell_other_item "$path" "$view" "$display" "$sort"
+      printf '\n'
+    done
+  fi
+  printf ')\n'
+} > "$tmpfile"
+
+mv "$tmpfile" "$TARGET_FILE"
+echo "Saved Dock layout to $TARGET_FILE"

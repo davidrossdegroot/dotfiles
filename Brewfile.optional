@@ -1,0 +1,13 @@
+# Optional CLI extras. Install these with:
+#   ./brew.sh install --optional-tools
+# or:
+#   INSTALL_OPTIONAL_TOOLS=1 ./setup-a-new-machine.sh
+#
+# `stow` stays optional because this repo still uses `move-in.sh` for its
+# curated dotfile symlinks.
+brew "btop"
+brew "dockutil"
+brew "ncdu"
+brew "stow"
+brew "tmux"
+brew "zoxide"
