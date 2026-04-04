@@ -63,28 +63,28 @@ Package installs are managed through `brew bundle` and include:
 
 Required/default formulae now include the core Unix tooling this repo expects on every machine:
 
-- `bat`
-- `direnv`
-- `fd`
-- `gh`
-- `jq`
-- `ripgrep`
-- `shellcheck`
-- `shfmt`
+- `bat` for syntax-highlighted file previews
+- `direnv` for automatically loading per-project environment variables from `.envrc`
+- `fd` for fast file and directory discovery
+- `gh` for GitHub workflows from the terminal
+- `jq` for querying and transforming JSON
+- `ripgrep` for fast recursive text search with `rg`
+- `shellcheck` for linting shell scripts
+- `shfmt` for formatting shell scripts
 
 The default formula list also includes local Postgres support through:
 
-- `postgresql@16`
-- `libpq`
+- `postgresql@16` for a local Postgres server
+- `libpq` for client tools such as `psql` and `pg_config`
 
 Optional CLI extras are kept separate so the default bootstrap stays lean:
 
-- `btop`
-- `dockutil`
-- `ncdu`
-- `stow`
-- `tmux`
-- `zoxide`
+- `btop` for an interactive system monitor
+- `dockutil` for scripting Dock changes
+- `ncdu` for browsing disk usage from the terminal
+- `stow` for managing symlink-based dotfiles layouts
+- `tmux` for persistent terminal sessions and panes
+- `zoxide` for smarter directory jumping based on where you use `cd`
 
 This repo still uses `./move-in.sh` for its curated symlink flow, so `stow` is installed only as an extra tool rather than replacing that script outright.
 
@@ -148,8 +148,8 @@ If you installed optional tools, `./bin/setup-dock` can reset the Dock with `doc
 
 Shell quality-of-life notes:
 
-- `direnv` is hooked automatically from `.zshrc` when it is installed
-- `zoxide` is also hooked automatically when optional tools are installed, replacing the older `z` package with a faster `z` command
+- `direnv` is hooked automatically from `.zshrc` when it is installed, so entering a directory can load or unload project-specific environment variables
+- `zoxide` is also hooked automatically when optional tools are installed, so `z foo` jumps to frequently used directories without manual bookmarks
 - the old `ag` alias has been removed in favor of native `rg` and `fd`
 
 ## Dotfiles And Helper Scripts
