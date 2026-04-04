@@ -1,0 +1,119 @@
+name: Bootstrap Smoke Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      optional_tools:
+        description: Include Brewfile.optional in the smoke test.
+        type: boolean
+        default: false
+        required: false
+  pull_request:
+    paths:
+      - ".github/workflows/bootstrap-smoke.yml"
+      - ".aliases"
+      - ".exports"
+      - ".extras"
+      - ".functions"
+      - ".gitconfig"
+      - ".zshrc"
+      - "Brewfile"
+      - "Brewfile.optional"
+      - "brew.sh"
+      - "move-in.sh"
+      - "setup-a-new-machine.sh"
+      - "bin/**"
+      - "dock/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bootstrap-smoke-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: macos-latest
+    timeout-minutes: 90
+
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      HOMEBREW_BUNDLE_NO_UPGRADE: "1"
+      HOMEBREW_NO_INSTALL_CLEANUP: "1"
+      SKIP_APP_STORE: "1"
+      SKIP_BREW_UPDATE: "1"
+      SKIP_CASKS: "1"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Default optional tools to off for PR smoke tests
+        if: github.event_name != 'workflow_dispatch'
+        run: echo "INSTALL_OPTIONAL_TOOLS=0" >> "$GITHUB_ENV"
+
+      - name: Decide whether to include optional tools for manual runs
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          optional_tools=0
+          if [[ "${{ inputs.optional_tools }}" == "true" ]]; then
+            optional_tools=1
+          fi
+
+          echo "INSTALL_OPTIONAL_TOOLS=$optional_tools" >> "$GITHUB_ENV"
+          echo "Optional tools enabled: $optional_tools"
+
+      - name: Syntax-check shell entrypoints
+        run: |
+          scripts=(brew.sh move-in.sh setup-a-new-machine.sh bin/*)
+          bash -n "${scripts[@]}"
+
+      - name: Bootstrap CLI-only environment
+        run: ./setup-a-new-machine.sh
+
+      - name: Verify shell formatting
+        run: |
+          scripts=(brew.sh move-in.sh setup-a-new-machine.sh bin/*)
+          shfmt -d -i 2 "${scripts[@]}"
+
+      - name: Lint shell scripts
+        run: |
+          scripts=(brew.sh move-in.sh setup-a-new-machine.sh bin/*)
+          shellcheck "${scripts[@]}"
+
+      - name: Confirm bundle state after install
+        run: |
+          ./brew.sh check --required-only --no-upgrade
+          if [[ "$INSTALL_OPTIONAL_TOOLS" == "1" ]]; then
+            ./brew.sh check --optional-tools --no-upgrade
+          fi
+
+      - name: Smoke-test move-in.sh in an isolated home directory
+        run: |
+          temp_home="$(mktemp -d)"
+          trap 'rm -rf "$temp_home"' EXIT
+
+          export HOME="$temp_home"
+          ./move-in.sh
+
+          managed_paths=(
+            .aliases
+            .exports
+            .extras
+            .functions
+            .gitconfig
+            .zshrc
+          )
+
+          for path in "${managed_paths[@]}"; do
+            [[ -L "$HOME/$path" ]]
+          done
+
+          for script in bin/*; do
+            [[ -f "$script" ]] || continue
+            [[ -L "$HOME/bin/$(basename "$script")" ]]
+          done

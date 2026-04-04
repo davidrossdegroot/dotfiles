@@ -27,9 +27,18 @@ if [[ -f "$TARGET_PATH" ]]; then
   echo "Warning: A file already exists at $TARGET_PATH"
   read -r -p "Do you want to overwrite it? (y/n/cancel): " choice
   case "$choice" in
-    y|Y ) rm "$TARGET_PATH"; echo "Overwriting file...";;
-    n|N ) echo "Keeping existing file. Skipping move."; exit 0;;
-    * ) echo "Operation canceled."; exit 1;;
+  y | Y)
+    rm "$TARGET_PATH"
+    echo "Overwriting file..."
+    ;;
+  n | N)
+    echo "Keeping existing file. Skipping move."
+    exit 0
+    ;;
+  *)
+    echo "Operation canceled."
+    exit 1
+    ;;
   esac
 fi
 

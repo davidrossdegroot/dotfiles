@@ -48,9 +48,18 @@ link_managed_path() {
   if [[ -e "$TARGET_PATH" || -L "$TARGET_PATH" ]]; then
     read -r -p "File $TARGET_PATH already exists. Overwrite? (y/n/cancel): " choice
     case "$choice" in
-      y|Y ) rm -rf -- "$TARGET_PATH"; echo "Overwriting $TARGET_PATH";;
-      n|N ) echo "Skipping $TARGET_PATH"; return;;
-      * ) echo "Operation canceled."; exit 1;;
+    y | Y)
+      rm -rf -- "$TARGET_PATH"
+      echo "Overwriting $TARGET_PATH"
+      ;;
+    n | N)
+      echo "Skipping $TARGET_PATH"
+      return
+      ;;
+    *)
+      echo "Operation canceled."
+      exit 1
+      ;;
     esac
   fi
 

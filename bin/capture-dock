@@ -83,27 +83,27 @@ xml_string() {
 
 map_display() {
   case "${1:-0}" in
-    1) printf 'folder' ;;
-    *) printf 'stack' ;;
+  1) printf 'folder' ;;
+  *) printf 'stack' ;;
   esac
 }
 
 map_view() {
   case "${1:-0}" in
-    0) printf 'auto' ;;
-    2) printf 'grid' ;;
-    3) printf 'list' ;;
-    *) printf 'fan' ;;
+  0) printf 'auto' ;;
+  2) printf 'grid' ;;
+  3) printf 'list' ;;
+  *) printf 'fan' ;;
   esac
 }
 
 map_sort() {
   case "${1:-1}" in
-    1) printf 'name' ;;
-    3) printf 'datemodified' ;;
-    4) printf 'datecreated' ;;
-    5) printf 'kind' ;;
-    *) printf 'dateadded' ;;
+  1) printf 'name' ;;
+  3) printf 'datemodified' ;;
+  4) printf 'datecreated' ;;
+  5) printf 'kind' ;;
+  *) printf 'dateadded' ;;
   esac
 }
 
@@ -152,7 +152,7 @@ fi
     done
   fi
   printf ')\n'
-} > "$tmpfile"
+} >"$tmpfile"
 
 mv "$tmpfile" "$TARGET_FILE"
 echo "Saved Dock layout to $TARGET_FILE"

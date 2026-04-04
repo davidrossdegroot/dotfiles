@@ -22,8 +22,8 @@ if [[ -z "$remote_name" ]]; then
 fi
 
 remote_url="$(git remote get-url --push "$remote_name")"
-owner_repo="$(printf '%s' "$remote_url" \
-  | sed -E 's#(git@|https://)github\.com[:/]##; s#\.git$##')"
+owner_repo="$(printf '%s' "$remote_url" |
+  sed -E 's#(git@|https://)github\.com[:/]##; s#\.git$##')"
 
 if [[ "$owner_repo" != */* ]]; then
   echo "Unsupported remote URL for GitHub: $remote_url"

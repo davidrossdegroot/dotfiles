@@ -32,7 +32,7 @@ done
 
 for item in "${DOCK_OTHERS[@]:-}"; do
   [[ -n "$item" ]] || continue
-  IFS='|' read -r path view display sort <<< "$item"
+  IFS='|' read -r path view display sort <<<"$item"
 
   if [[ ! -e "$path" ]]; then
     echo "Skipping missing Dock item: $path"
