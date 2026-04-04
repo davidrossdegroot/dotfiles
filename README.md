@@ -11,7 +11,7 @@ xcode-select --install
 ```
 
 2. Install Homebrew.
-3. Clone this repo.
+3. Clone this repo over HTTPS.
 4. Sign in to the Mac App Store if you want `mas` to install App Store apps.
 5. Run:
 
@@ -31,6 +31,16 @@ If you are not signed in to the App Store yet, you can skip those installs for n
 SKIP_APP_STORE=1 ./setup-a-new-machine.sh
 ```
 
+6. Run:
+
+```bash
+./bin/setup-github-auth
+```
+
+That helper uses `gh` to authenticate GitHub in the browser, set GitHub's preferred git protocol to SSH, prompt to create or upload an SSH key when needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH.
+
+Cloning over HTTPS keeps SSH setup out of the critical path for a fresh machine. If the repo is private, use whatever HTTPS auth flow gets the first clone onto disk, then switch the machine to SSH with `./bin/setup-github-auth`.
+
 The package source of truth is `Brewfile` for the default bootstrap and `Brewfile.optional` for opt-in extras. `setup-a-new-machine.sh` is the human-friendly entrypoint, and `brew.sh` is the package-only helper that runs `brew bundle`.
 
 This bootstrap assumes macOS or Xcode Command Line Tools already provide:
@@ -45,12 +55,16 @@ Those are intentionally not installed from Homebrew.
 
 `./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
 
+`./bin/setup-github-auth` is the GitHub auth step after bootstrap. It uses the installed GitHub CLI to sign in with `--git-protocol ssh`, lets GitHub CLI create or upload an SSH key if needed, tests the SSH connection to GitHub, and switches this repo's `origin` remote from HTTPS to SSH.
+
 `./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages, and it symlinks every file in `bin/` into `~/bin`. It does not install Homebrew packages, casks, or App Store apps.
 
 If you are setting up a fresh machine, the intended order is:
 
-1. Run `./setup-a-new-machine.sh` to install software.
-2. Review `./move-in.sh`, then run it if you want the managed dotfiles linked into `$HOME` and the repo's `bin/*` scripts symlinked into `~/bin`.
+1. Clone the repo over HTTPS so SSH setup does not block bootstrap.
+2. Run `./setup-a-new-machine.sh` to install software, including `gh`.
+3. Run `./bin/setup-github-auth` to authenticate GitHub and switch this repo to SSH.
+4. Review `./move-in.sh`, then run it if you want the managed dotfiles linked into `$HOME` and the repo's `bin/*` scripts symlinked into `~/bin`.
 
 ## What Gets Installed
 
@@ -132,6 +146,14 @@ node --version
 npm --version
 ```
 
+GitHub setup:
+
+```bash
+./bin/setup-github-auth
+```
+
+That helper opens the GitHub CLI browser flow, sets GitHub's git protocol to SSH, prompts to create or upload an SSH key if needed, tests `ssh -T git@github.com`, and updates this repo's `origin` remote to SSH.
+
 Mac preferences that still need to be done manually:
 
 - Show battery percentage
@@ -176,12 +198,14 @@ That means these helper scripts are available on your `PATH` as symlinks from `~
 - `add-ruby`
 - `capture-dock`
 - `pull-request.sh`
+- `setup-github-auth`
 - `setup-dock`
 - `symlinkToDotfilesRepo.sh`
 
 `bin/symlinkToDotfilesRepo.sh` is useful for moving files into the dotfiles repo and replacing them with symlinks.
 `bin/capture-dock` snapshots the current Dock into `dock/layout.sh`.
 `bin/setup-dock` uses `dockutil` to recreate the Dock from `dock/layout.sh`.
+`bin/setup-github-auth` authenticates GitHub with `gh`, sets SSH as the preferred git protocol, tests the SSH connection, and switches this repo's `origin` remote to SSH.
 
 ## Postgres
 
