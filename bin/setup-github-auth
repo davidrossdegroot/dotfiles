@@ -21,18 +21,18 @@ github_ssh_remote() {
   local owner_repo
 
   case "$remote_url" in
-    https://github.com/*)
-      owner_repo="${remote_url#https://github.com/}"
-      ;;
-    git@github.com:*)
-      owner_repo="${remote_url#git@github.com:}"
-      ;;
-    ssh://git@github.com/*)
-      owner_repo="${remote_url#ssh://git@github.com/}"
-      ;;
-    *)
-      return 1
-      ;;
+  https://github.com/*)
+    owner_repo="${remote_url#https://github.com/}"
+    ;;
+  git@github.com:*)
+    owner_repo="${remote_url#git@github.com:}"
+    ;;
+  ssh://git@github.com/*)
+    owner_repo="${remote_url#ssh://git@github.com/}"
+    ;;
+  *)
+    return 1
+    ;;
   esac
 
   owner_repo="${owner_repo%.git}"
@@ -80,16 +80,16 @@ test_github_ssh() {
   set -e
 
   case "$status" in
-    1)
-      echo "GitHub SSH authentication looks good."
-      ;;
-    255)
-      echo "GitHub SSH test failed."
-      exit 1
-      ;;
-    *)
-      echo "GitHub SSH test exited with status $status."
-      ;;
+  1)
+    echo "GitHub SSH authentication looks good."
+    ;;
+  255)
+    echo "GitHub SSH test failed."
+    exit 1
+    ;;
+  *)
+    echo "GitHub SSH test exited with status $status."
+    ;;
   esac
 }
 

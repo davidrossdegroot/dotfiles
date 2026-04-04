@@ -71,7 +71,7 @@ update_extras_file() {
       $_ .= "\n" unless /\n\n\z/;
       $_ .= $block . "\n";
     }
-  ' "$extras_file" > "$tmpfile"; then
+  ' "$extras_file" >"$tmpfile"; then
     rm -f "$tmpfile"
     echo "Failed to update $extras_file"
     exit 1
