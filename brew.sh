@@ -1,56 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BREWFILE="$SCRIPT_DIR/Brewfile"
+
 if ! command -v brew >/dev/null 2>&1; then
   echo "Homebrew is not installed. Install it first: https://brew.sh/"
   exit 1
 fi
 
-# Make sure we're using the latest Homebrew.
+if [[ ! -f "$BREWFILE" ]]; then
+  echo "Brewfile not found at $BREWFILE"
+  exit 1
+fi
+
+if [[ "${SKIP_APP_STORE:-0}" == "1" ]]; then
+  export HOMEBREW_BUNDLE_MAS_SKIP="GarageBand iMovie Keynote Numbers Pages Xcode"
+  echo "Skipping Mac App Store installs because SKIP_APP_STORE=1"
+fi
+
+subcommand="install"
+if [[ $# -gt 0 ]]; then
+  case "$1" in
+    install|check|list|cleanup|upgrade)
+      subcommand="$1"
+      shift
+      ;;
+  esac
+fi
+
+# Make sure we're using the latest Homebrew metadata before installing.
 brew update
-brew upgrade
-
-# Core CLI tools.
-formulas=(
-  coreutils
-  moreutils
-  findutils
-  gnu-sed
-  bash
-  bash-completion
-  wget
-  vim
-  nano
-  grep
-  z
-  mtr
-  fzf
-  git
-  imagemagick
-  tree
-  nvm
-  zsh
-)
-
-for formula in "${formulas[@]}"; do
-  brew install "$formula"
-done
-
-# GUI apps.
-casks=(
-  1password
-  iterm2
-  sublime-text
-  gyazo
-  spectacle
-  visual-studio-code
-)
-
-for cask in "${casks[@]}"; do
-  brew install --cask "$cask"
-done
+brew bundle "$subcommand" --file="$BREWFILE" "$@"
 
 echo "Run 'nvm install --lts' after opening a new shell."
-
-# Remove outdated versions from the cellar.
-brew cleanup
+echo "If you skipped App Store installs, sign in later and rerun './brew.sh'."

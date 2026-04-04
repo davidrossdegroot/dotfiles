@@ -17,7 +17,7 @@ find "$DOTFILES_DIR" -type f \
   ! -path "$DOTFILES_DIR/.git/*" \
   ! -name ".gitignore" | while read -r FILE; do
   # Get the relative path from dotfiles directory
-  RELATIVE_PATH="${FILE#$DOTFILES_DIR/}"
+  RELATIVE_PATH="${FILE#"$DOTFILES_DIR"/}"
   
   # Target path in the home directory
   TARGET_PATH="$HOME/$RELATIVE_PATH"
@@ -33,7 +33,7 @@ find "$DOTFILES_DIR" -type f \
 
   # Check if the target file already exists
   if [[ -e "$TARGET_PATH" || -L "$TARGET_PATH" ]]; then
-    read -p "File $TARGET_PATH already exists. Overwrite? (y/n/cancel): " choice
+    read -r -p "File $TARGET_PATH already exists. Overwrite? (y/n/cancel): " choice
     case "$choice" in
       y|Y ) rm -rf "$TARGET_PATH"; echo "Overwriting $TARGET_PATH";;
       n|N ) echo "Skipping $TARGET_PATH"; continue;;

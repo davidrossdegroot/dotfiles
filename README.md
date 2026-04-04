@@ -1,54 +1,124 @@
 # dotfiles
 
-Used this for macbook air 2020 during the great quarantine of 2020 and for mac mini in Feb, 2025. 
+Used this for a MacBook Air in 2020 and a Mac mini in February 2025.
 
-- [ ] Install chrome — login and do the sync
-- [ ] Download xcode from App Store and command line tools. Brew needs these.
-- [ ] Change battery to show percentage
-- [ ] fix finder sidebar and other finder stuff. I don't know how to programatically do that.
-- [ ] Removed apps from dock that I don't use
-- [ ] Change mouse scroll direction
-- [ ] Change mouse to touch to click
-- [ ] Download JetBrains Mono font https://www.jetbrains.com/lp/mono/  -> expand the folder and then add it to Documents folder
-- [ ] Open FontBook -> File -> Add Fonts to current user.
-- [ ] install homebrew https://brew.sh/ 
+## Canonical bootstrap flow
 
-### install oh-my-zsh
+1. Install Xcode Command Line Tools and Homebrew.
+2. Clone this repo.
+3. Sign in to the Mac App Store if you want `mas` to install App Store apps.
+4. Run:
+
+```bash
+./setup-a-new-machine.sh
 ```
+
+If you are not signed in to the App Store yet, you can skip those installs for now:
+
+```bash
+SKIP_APP_STORE=1 ./setup-a-new-machine.sh
+```
+
+The package source of truth is `Brewfile`. `setup-a-new-machine.sh` is the human-friendly entrypoint, and `brew.sh` is the package-only helper that runs `brew bundle`.
+
+This bootstrap assumes macOS or Xcode Command Line Tools already provide:
+
+- `bash`
+- `git`
+- `zsh`
+
+Those are intentionally not installed from Homebrew.
+
+## What Gets Installed
+
+Package installs are managed through `brew bundle` and include:
+
+- Homebrew formulae from `Brewfile`
+- GUI apps through Homebrew Cask
+- Mac App Store apps through `mas`
+
+The default formula list also includes local Postgres support through:
+
+- `postgresql@16`
+- `libpq`
+
+Notable cask installs include:
+
+- `1password`
+- `claude`
+- `google-chrome`
+- `iterm2`
+- `sublime-text`
+- `visual-studio-code`
+
+Managed App Store installs currently include:
+
+- `GarageBand`
+- `iMovie`
+- `Keynote`
+- `Numbers`
+- `Pages`
+- `Xcode`
+
+`Spectacle` is intentionally not in the `Brewfile` because the legacy cask is no longer available in Homebrew.
+
+## Manual Follow-Up
+
+Shell setup:
+
+```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
-Install plugins you want for Oh My Zsh, for example:
-`zsh-autosuggestions`
 
-### Clone this repo
+Install whatever Oh My Zsh plugins you want, for example:
 
-I'd recommend cloning this repo because each time I go through it, I kind of change stuff so you can keep this README open and just update it as you go along.
+- `zsh-autosuggestions`
+- `zsh-fzf-history-search`
 
-Go through `setup-a-new-machine.sh` and `brew.sh` and install the parts you want manually.
+After opening a new shell, run:
 
-If you want Ctrl+R fuzzy history search:
-- https://github.com/joshskidmore/zsh-fzf-history-search
-
-You can run `move-in.sh` to set up symlinks from this repo to your home directory.
-
-### bin folder setup
+```bash
+nvm install --lts
 ```
-# create the necessary home directory bin folder
-mkdir ~/bin
-# copy helper scripts from this repo into your bin
+
+Mac preferences that still need to be done manually:
+
+- Show battery percentage
+- Fix Finder sidebar and other Finder preferences
+- Remove apps from the Dock that you do not use
+- Change mouse scroll direction
+- Change mouse tap-to-click
+- Download JetBrains Mono from <https://www.jetbrains.com/lp/mono/> and add it in Font Book
+
+## Dotfiles And Helper Scripts
+
+`move-in.sh` can symlink repo files into `$HOME`, but it is still broader than it should be. Review it before using it on a fresh machine.
+
+If you want the helper scripts on your `PATH`:
+
+```bash
+mkdir -p ~/bin
 cp bin/* ~/bin/
 ```
-This symlink file is pretty nice too for moving the files to the dotfiles repo and symlinking them
-`bin/symlinkToDotfilesRepo.sh`
 
-### Postgres
-Install postgres using brew. This should let you use postgres for a Rails app.
-```
-brew install postgresql@16
-#  for some reason mac M3s or whatever need this
-brew install libpq
-# this tells bundler that you want to use this special config (globally)
-bundle config --global build.pg --with-pg-config="$(brew --prefix libpq)/bin/pg_config"
-# this will ensure it starts when you start your computer
+`bin/symlinkToDotfilesRepo.sh` is also useful for moving files into the dotfiles repo and replacing them with symlinks.
+
+## Postgres
+
+Postgres is part of the default bootstrap now. The `Brewfile` installs:
+
+- `postgresql@16`
+- `libpq`
+
+`postgresql@16` is configured with `restart_service: :changed`, so Homebrew Bundle will start or restart it when the formula is installed or updated.
+
+After opening a new shell, `.exports` puts Homebrew `libpq` on your `PATH`, so `psql` and `pg_config` should be available without a global Bundler override.
+
+Useful commands:
+
+```bash
 brew services start postgresql@16
+brew services stop postgresql@16
+psql --version
+pg_config --version
 ```
