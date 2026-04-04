@@ -17,6 +17,7 @@ fi
 # Determine the rubies installation directory.
 # Defaults to $HOME/.rubies if RUBIES_INSTALL_ROOT is not set.
 ruby_install_dir="${RUBIES_INSTALL_ROOT:-$HOME/.rubies}"
+extras_file="$HOME/.extras"
 
 # Check if the specified Ruby version is already installed
 # It checks for either directory structure: "<version>" or "ruby-<version>"
@@ -30,16 +31,54 @@ else
   fi
 fi
 
-# Update the ~/.extras file to use the new Ruby version.
-touch "$HOME/.extras"
-
-tmpfile="$(mktemp)"
-if grep -Eq '^chruby[[:space:]]+' "$HOME/.extras"; then
-  sed -E "s|^chruby[[:space:]]+.*$|chruby $ruby_version|" "$HOME/.extras" > "$tmpfile"
-  mv "$tmpfile" "$HOME/.extras"
-  echo "Updated ~/.extras to use: chruby $ruby_version"
-else
-  rm -f "$tmpfile"
-  printf "\nchruby %s\n" "$ruby_version" >> "$HOME/.extras"
-  echo "Added to ~/.extras: chruby $ruby_version"
+render_chruby_block() {
+  cat <<EOF
+# default ruby
+# >>> dotfiles chruby >>>
+ruby_install_root="\${RUBIES_INSTALL_ROOT:-\$HOME/.rubies}"
+if command -v chruby >/dev/null 2>&1; then
+  if [[ -d "\$ruby_install_root/$ruby_version" || -d "\$ruby_install_root/ruby-$ruby_version" ]]; then
+    chruby $ruby_version
+  fi
 fi
+# <<< dotfiles chruby <<<
+EOF
+}
+
+update_extras_file() {
+  local chruby_block tmpfile
+
+  touch "$extras_file"
+  chruby_block="$(render_chruby_block)"
+  tmpfile="$(mktemp)"
+
+  if ! CHRUBY_BLOCK="$chruby_block" perl -0pe '
+    my $block = $ENV{CHRUBY_BLOCK};
+    my $updated = 0;
+
+    if (s/\n?# default ruby\n# >>> dotfiles chruby >>>\n.*?\n# <<< dotfiles chruby <<<\n?/\n$block\n/s) {
+      $updated = 1;
+    } elsif (s/\n?# default ruby\nruby_install_root="\$\{RUBIES_INSTALL_ROOT:-\$HOME\/\.rubies\}"\nif command -v chruby >\/dev\/null 2>&1; then\n  if \[\[ -d "\$ruby_install_root\/[^\n]+" \|\| -d "\$ruby_install_root\/ruby-[^\n]+" \]\]; then\n    chruby [^\n]+\n  fi\nfi\n?/\n$block\n/s) {
+      $updated = 1;
+    } elsif (s/\n?# ensure chruby is sourced\nsource .*?chruby\.sh\n\n# use current ruby\nchruby [^\n]+\n?/\n$block\n/s) {
+      $updated = 1;
+    } elsif (s/^chruby [^\n]+$/$block/m) {
+      $updated = 1;
+    }
+
+    if (!$updated) {
+      $_ .= "\n" unless /\n\z/;
+      $_ .= "\n" unless /\n\n\z/;
+      $_ .= $block . "\n";
+    }
+  ' "$extras_file" > "$tmpfile"; then
+    rm -f "$tmpfile"
+    echo "Failed to update $extras_file"
+    exit 1
+  fi
+
+  mv "$tmpfile" "$extras_file"
+  echo "Updated $extras_file to use: chruby $ruby_version"
+}
+
+update_extras_file

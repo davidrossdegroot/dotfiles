@@ -78,7 +78,19 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-autosuggestions zsh-fzf-history-search)
 
-source $ZSH/oh-my-zsh.sh
+if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
+    ZSH_CUSTOM="${ZSH_CUSTOM:-$ZSH/custom}"
+    available_plugins=()
+
+    for plugin in "${plugins[@]}"; do
+        if [[ -d "$ZSH/plugins/$plugin" || -d "$ZSH_CUSTOM/plugins/$plugin" ]]; then
+            available_plugins+=("$plugin")
+        fi
+    done
+
+    plugins=("${available_plugins[@]}")
+    source "$ZSH/oh-my-zsh.sh"
+fi
 
 # User configuration
 

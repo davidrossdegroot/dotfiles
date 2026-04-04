@@ -75,10 +75,15 @@ Install whatever Oh My Zsh plugins you want, for example:
 - `zsh-autosuggestions`
 - `zsh-fzf-history-search`
 
+This repo expects `nvm` to use `~/.nvm`.
+
 After opening a new shell, run:
 
 ```bash
+mkdir -p ~/.nvm
 nvm install --lts
+node --version
+npm --version
 ```
 
 Mac preferences that still need to be done manually:
