@@ -16,7 +16,7 @@ Machine setup checklist:
 
 - Change battery to show percentage
 - Fix Finder sidebar and other Finder preferences
-- Remove apps from the Dock that you do not use
+- If you installed optional tools, run `./bin/setup-dock` to reset the Dock to this repo's baseline apps
 - Change mouse scroll direction if needed
 - Change mouse to tap to click if needed
 - Download JetBrains Mono and add it in Font Book
@@ -25,6 +25,8 @@ Shell setup:
 
 - Install oh-my-zsh: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 - Install the zsh plugins you want, for example `zsh-autosuggestions`
+- `direnv` hooks are enabled automatically in `~/.zshrc` when `direnv` is installed
+- `zoxide` hooks are enabled automatically in `~/.zshrc` when optional tools are installed
 - This repo expects `nvm` to use `~/.nvm`
 - Open a new shell and run `nvm install --lts`
 - Verify Node is available with `node --version` and `npm --version`
@@ -33,7 +35,12 @@ Repo-managed files:
 
 - `move-in.sh` links only these files into `$HOME`: `.aliases`, `.exports`, `.extras`, `.functions`, `.gitconfig`, and `.zshrc`
 - `move-in.sh` also symlinks every file in this repo's `bin/` directory into `~/bin`
-- Repo docs, bootstrap scripts, and `Brewfile` are intentionally excluded from that symlink step
+- Repo docs, bootstrap scripts, and `Brewfile*` are intentionally excluded from that symlink step
+
+Optional CLI extras:
+
+- Re-run this script with `--optional-tools` or `INSTALL_OPTIONAL_TOOLS=1` to install `stow`, `tmux`, `zoxide`, `btop`, `ncdu`, and `dockutil`
+- `dockutil` powers the optional `./bin/setup-dock` helper
 
 Postgres:
 

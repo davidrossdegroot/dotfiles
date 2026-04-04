@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v dockutil >/dev/null 2>&1; then
+  echo "dockutil is required. Install optional tools with './brew.sh install --optional-tools' first."
+  exit 1
+fi
+
+DOCK_APPS=(
+  "/Applications/Google Chrome.app"
+  "/Applications/iTerm.app"
+  "/Applications/Visual Studio Code.app"
+  "/Applications/ChatGPT.app"
+  "/Applications/Claude.app"
+  "/Applications/1Password.app"
+  "/Applications/Sublime Text.app"
+  "/Applications/Docker.app"
+  "/Applications/zoom.us.app"
+  "/System/Applications/System Settings.app"
+)
+
+echo "Resetting Dock to the dotfiles baseline..."
+dockutil --no-restart --remove all
+
+for app in "${DOCK_APPS[@]}"; do
+  if [[ -e "$app" ]]; then
+    dockutil --no-restart --add "$app"
+  else
+    echo "Skipping missing Dock app: $app"
+  fi
+done
+
+killall Dock >/dev/null 2>&1 || true
+echo "Dock updated."
