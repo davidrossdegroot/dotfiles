@@ -1,12 +1,10 @@
 # Core CLI tools.
-brew "bash"
 brew "bash-completion"
 brew "chruby"
 brew "coreutils"
 brew "findutils"
 brew "fzf"
 brew "gh"
-brew "git"
 brew "gnu-sed"
 brew "grep"
 brew "imagemagick"
@@ -26,7 +24,6 @@ brew "tree"
 brew "vim"
 brew "wget"
 brew "z"
-brew "zsh"
 
 # GUI apps installed with Homebrew Cask.
 cask "1password"

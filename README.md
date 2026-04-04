@@ -21,6 +21,14 @@ SKIP_APP_STORE=1 ./setup-a-new-machine.sh
 
 The package source of truth is `Brewfile`. `setup-a-new-machine.sh` is the human-friendly entrypoint, and `brew.sh` is the package-only helper that runs `brew bundle`.
 
+This bootstrap assumes macOS or Xcode Command Line Tools already provide:
+
+- `bash`
+- `git`
+- `zsh`
+
+Those are intentionally not installed from Homebrew.
+
 ## What Gets Installed
 
 Package installs are managed through `brew bundle` and include:
