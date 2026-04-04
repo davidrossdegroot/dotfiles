@@ -97,7 +97,16 @@ Mac preferences that still need to be done manually:
 
 ## Dotfiles And Helper Scripts
 
-`move-in.sh` can symlink repo files into `$HOME`, but it is still broader than it should be. Review it before using it on a fresh machine.
+Run `./move-in.sh` to link the dotfiles this repo intentionally manages in `$HOME`:
+
+- `.aliases`
+- `.exports`
+- `.extras`
+- `.functions`
+- `.gitconfig`
+- `.zshrc`
+
+It does not link repo documentation, bootstrap scripts, `Brewfile`, or `bin/*` by default.
 
 If you want the helper scripts on your `PATH`:
 

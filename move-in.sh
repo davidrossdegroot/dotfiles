@@ -4,21 +4,32 @@ set -euo pipefail
 # Define the dotfiles directory as the script location.
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Only link the files this repo intentionally manages in $HOME.
+MANAGED_FILES=(
+  ".aliases"
+  ".exports"
+  ".extras"
+  ".functions"
+  ".gitconfig"
+  ".zshrc"
+)
+
 # Ensure the dotfiles directory exists
 if [[ ! -d "$DOTFILES_DIR" ]]; then
   echo "Error: Dotfiles directory not found at $DOTFILES_DIR"
   exit 1
 fi
 
-echo "Restoring symlinks from $DOTFILES_DIR to $HOME..."
+echo "Restoring managed symlinks from $DOTFILES_DIR to $HOME..."
 
-# Find all files in dotfiles repo, excluding git internals.
-find "$DOTFILES_DIR" -type f \
-  ! -path "$DOTFILES_DIR/.git/*" \
-  ! -name ".gitignore" | while read -r FILE; do
-  # Get the relative path from dotfiles directory
-  RELATIVE_PATH="${FILE#"$DOTFILES_DIR"/}"
-  
+for RELATIVE_PATH in "${MANAGED_FILES[@]}"; do
+  FILE="$DOTFILES_DIR/$RELATIVE_PATH"
+
+  if [[ ! -e "$FILE" ]]; then
+    echo "Skipping missing managed file: $FILE"
+    continue
+  fi
+
   # Target path in the home directory
   TARGET_PATH="$HOME/$RELATIVE_PATH"
 
@@ -35,7 +46,7 @@ find "$DOTFILES_DIR" -type f \
   if [[ -e "$TARGET_PATH" || -L "$TARGET_PATH" ]]; then
     read -r -p "File $TARGET_PATH already exists. Overwrite? (y/n/cancel): " choice
     case "$choice" in
-      y|Y ) rm -rf "$TARGET_PATH"; echo "Overwriting $TARGET_PATH";;
+      y|Y ) rm -rf -- "$TARGET_PATH"; echo "Overwriting $TARGET_PATH";;
       n|N ) echo "Skipping $TARGET_PATH"; continue;;
       * ) echo "Operation canceled."; exit 1;;
     esac
@@ -43,7 +54,7 @@ find "$DOTFILES_DIR" -type f \
 
   # Create the symlink
   ln -s "$FILE" "$TARGET_PATH"
-  echo "Symlinked $TARGET_PATH → $FILE"
+  echo "Symlinked $TARGET_PATH -> $FILE"
 done
 
 echo "Symlink restoration complete!"

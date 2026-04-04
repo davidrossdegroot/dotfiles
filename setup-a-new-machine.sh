@@ -31,7 +31,8 @@ Shell setup:
 
 Repo-managed files:
 
-- Review `move-in.sh` before running it. It is still broad and will symlink repo files into `$HOME`.
+- `move-in.sh` links only these files into `$HOME`: `.aliases`, `.exports`, `.extras`, `.functions`, `.gitconfig`, and `.zshrc`
+- Repo docs, bootstrap scripts, `Brewfile`, and `bin/*` are intentionally excluded from that symlink step
 - Copy helper scripts into `~/bin` if you want them available on your PATH: `mkdir -p ~/bin && cp bin/* ~/bin/`
 
 Postgres:
