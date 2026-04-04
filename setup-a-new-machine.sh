@@ -25,7 +25,9 @@ Shell setup:
 
 - Install oh-my-zsh: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 - Install the zsh plugins you want, for example `zsh-autosuggestions`
+- This repo expects `nvm` to use `~/.nvm`
 - Open a new shell and run `nvm install --lts`
+- Verify Node is available with `node --version` and `npm --version`
 
 Repo-managed files:
 
