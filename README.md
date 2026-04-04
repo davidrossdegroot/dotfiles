@@ -29,6 +29,11 @@ Package installs are managed through `brew bundle` and include:
 - GUI apps through Homebrew Cask
 - Mac App Store apps through `mas`
 
+The default formula list also includes local Postgres support through:
+
+- `postgresql@16`
+- `libpq`
+
 Notable cask installs include:
 
 - `1password`
@@ -92,11 +97,20 @@ cp bin/* ~/bin/
 
 ## Postgres
 
-For Rails work:
+Postgres is part of the default bootstrap now. The `Brewfile` installs:
+
+- `postgresql@16`
+- `libpq`
+
+`postgresql@16` is configured with `restart_service: :changed`, so Homebrew Bundle will start or restart it when the formula is installed or updated.
+
+After opening a new shell, `.exports` puts Homebrew `libpq` on your `PATH`, so `psql` and `pg_config` should be available without a global Bundler override.
+
+Useful commands:
 
 ```bash
-brew install postgresql@16
-brew install libpq
-bundle config --global build.pg --with-pg-config="$(brew --prefix libpq)/bin/pg_config"
 brew services start postgresql@16
+brew services stop postgresql@16
+psql --version
+pg_config --version
 ```

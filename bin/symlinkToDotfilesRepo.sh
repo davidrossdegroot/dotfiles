@@ -7,7 +7,7 @@ DOTFILES_DIR="$HOME/workspace/dotfiles"
 mkdir -p "$DOTFILES_DIR"
 
 # Prompt the user for the file path
-read -p "Enter the file path relative to your HOME directory (e.g., .exports or bin/x.sh): " RELATIVE_PATH
+read -r -p "Enter the file path relative to your HOME directory (e.g., .exports or bin/x.sh): " RELATIVE_PATH
 
 # Expand full paths
 ORIGINAL_PATH="$HOME/$RELATIVE_PATH"
@@ -25,7 +25,7 @@ mkdir -p "$(dirname "$TARGET_PATH")"
 # Check if the file already exists in the dotfiles directory
 if [[ -f "$TARGET_PATH" ]]; then
   echo "Warning: A file already exists at $TARGET_PATH"
-  read -p "Do you want to overwrite it? (y/n/cancel): " choice
+  read -r -p "Do you want to overwrite it? (y/n/cancel): " choice
   case "$choice" in
     y|Y ) rm "$TARGET_PATH"; echo "Overwriting file...";;
     n|N ) echo "Keeping existing file. Skipping move."; exit 0;;
@@ -40,4 +40,3 @@ mv "$ORIGINAL_PATH" "$TARGET_PATH"
 ln -s "$TARGET_PATH" "$ORIGINAL_PATH"
 
 echo "Successfully moved $RELATIVE_PATH to $TARGET_PATH and created a symlink at $ORIGINAL_PATH"
-

@@ -32,12 +32,12 @@ Repo-managed files:
 - Review `move-in.sh` before running it. It is still broad and will symlink repo files into `$HOME`.
 - Copy helper scripts into `~/bin` if you want them available on your PATH: `mkdir -p ~/bin && cp bin/* ~/bin/`
 
-Optional Postgres setup:
+Postgres:
 
-- brew install postgresql@16
-- brew install libpq
-- bundle config --global build.pg --with-pg-config="$(brew --prefix libpq)/bin/pg_config"
-- brew services start postgresql@16
+- `postgresql@16` and `libpq` are installed by default from the `Brewfile`
+- `postgresql@16` is configured to start after install or upgrade through Homebrew Bundle
+- Open a new shell before using `psql` or `pg_config`, since `.exports` adds Homebrew `libpq` to your `PATH`
+- If you stop the service later, restart it with `brew services start postgresql@16`
 
 Ruby references:
 
