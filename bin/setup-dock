@@ -6,20 +6,20 @@ if ! command -v dockutil >/dev/null 2>&1; then
   exit 1
 fi
 
-DOCK_APPS=(
-  "/Applications/Google Chrome.app"
-  "/Applications/iTerm.app"
-  "/Applications/Visual Studio Code.app"
-  "/Applications/ChatGPT.app"
-  "/Applications/Claude.app"
-  "/Applications/1Password.app"
-  "/Applications/Sublime Text.app"
-  "/Applications/Docker.app"
-  "/Applications/zoom.us.app"
-  "/System/Applications/System Settings.app"
-)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+LAYOUT_FILE="${1:-$DOTFILES_DIR/dock/layout.sh}"
 
-echo "Resetting Dock to the dotfiles baseline..."
+if [[ ! -f "$LAYOUT_FILE" ]]; then
+  echo "Dock layout not found at $LAYOUT_FILE"
+  echo "Run './bin/capture-dock' to save the current Dock into the repo first."
+  exit 1
+fi
+
+# shellcheck disable=SC1090
+source "$LAYOUT_FILE"
+
+echo "Resetting Dock from $LAYOUT_FILE..."
 dockutil --no-restart --remove all
 
 for app in "${DOCK_APPS[@]}"; do
@@ -28,6 +28,18 @@ for app in "${DOCK_APPS[@]}"; do
   else
     echo "Skipping missing Dock app: $app"
   fi
+done
+
+for item in "${DOCK_OTHERS[@]:-}"; do
+  [[ -n "$item" ]] || continue
+  IFS='|' read -r path view display sort <<< "$item"
+
+  if [[ ! -e "$path" ]]; then
+    echo "Skipping missing Dock item: $path"
+    continue
+  fi
+
+  dockutil --no-restart --add "$path" --section others --view "$view" --display "$display" --sort "$sort"
 done
 
 killall Dock >/dev/null 2>&1 || true

@@ -16,7 +16,7 @@ Machine setup checklist:
 
 - Change battery to show percentage
 - Fix Finder sidebar and other Finder preferences
-- If you installed optional tools, run `./bin/setup-dock` to reset the Dock to this repo's baseline apps
+- If you installed optional tools, run `./bin/setup-dock` to recreate the Dock layout saved in this repo
 - Change mouse scroll direction if needed
 - Change mouse to tap to click if needed
 - Download JetBrains Mono and add it in Font Book
@@ -40,7 +40,7 @@ Repo-managed files:
 Optional CLI extras:
 
 - Re-run this script with `--optional-tools` or `INSTALL_OPTIONAL_TOOLS=1` to install `stow`, `tmux`, `zoxide`, `btop`, `ncdu`, and `dockutil`
-- `dockutil` powers the optional `./bin/setup-dock` helper
+- `dockutil` powers `./bin/capture-dock` and `./bin/setup-dock` for saving and restoring the repo's Dock layout
 
 Postgres:
 

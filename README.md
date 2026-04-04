@@ -140,16 +140,20 @@ Mac preferences that still need to be done manually:
 - Change mouse tap-to-click
 - Download JetBrains Mono from <https://www.jetbrains.com/lp/mono/> and add it in Font Book
 
-If you installed optional tools, `./bin/setup-dock` can reset the Dock with `dockutil`:
+If you installed optional tools, the Dock helpers can save and restore the repo's Dock layout with `dockutil`:
 
 ```bash
+./bin/capture-dock
 ./bin/setup-dock
 ```
+
+`./bin/capture-dock` snapshots your current Dock into `dock/layout.sh`. `./bin/setup-dock` clears the Dock and recreates it from that saved layout, including right-side folder stacks such as `Downloads`.
 
 Shell quality-of-life notes:
 
 - `direnv` is hooked automatically from `.zshrc` when it is installed, so entering a directory can load or unload project-specific environment variables
 - `zoxide` is also hooked automatically when optional tools are installed, so `z foo` jumps to frequently used directories without manual bookmarks
+- interactive shells wrap `brew install` and prompt you to review `Brewfile` or `Brewfile.optional` after successful installs
 - the old `ag` alias has been removed in favor of native `rg` and `fd`
 
 ## Dotfiles And Helper Scripts
@@ -170,12 +174,14 @@ It does not link repo documentation, bootstrap scripts, or `Brewfile*` by defaul
 That means these helper scripts are available on your `PATH` as symlinks from `~/bin`:
 
 - `add-ruby`
+- `capture-dock`
 - `pull-request.sh`
 - `setup-dock`
 - `symlinkToDotfilesRepo.sh`
 
 `bin/symlinkToDotfilesRepo.sh` is useful for moving files into the dotfiles repo and replacing them with symlinks.
-`bin/setup-dock` uses `dockutil` to clear the Dock and add a small baseline set of apps that match this repo's bootstrap.
+`bin/capture-dock` snapshots the current Dock into `dock/layout.sh`.
+`bin/setup-dock` uses `dockutil` to recreate the Dock from `dock/layout.sh`.
 
 ## Postgres
 
