@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+resolve_script_dir() {
+  local source_path="$1"
+
+  while [[ -L "$source_path" ]]; do
+    local source_dir
+    source_dir="$(cd -P "$(dirname "$source_path")" && pwd)"
+    source_path="$(readlink "$source_path")"
+    if [[ "$source_path" != /* ]]; then
+      source_path="$source_dir/$source_path"
+    fi
+  done
+
+  cd -P "$(dirname "$source_path")" && pwd
+}
+
+github_ssh_remote() {
+  local remote_url="$1"
+  local owner_repo
+
+  case "$remote_url" in
+    https://github.com/*)
+      owner_repo="${remote_url#https://github.com/}"
+      ;;
+    git@github.com:*)
+      owner_repo="${remote_url#git@github.com:}"
+      ;;
+    ssh://git@github.com/*)
+      owner_repo="${remote_url#ssh://git@github.com/}"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+
+  owner_repo="${owner_repo%.git}"
+  if [[ "$owner_repo" != */* ]]; then
+    return 1
+  fi
+
+  printf 'git@github.com:%s.git\n' "$owner_repo"
+}
+
+update_dotfiles_remote_to_ssh() {
+  local repo_dir="$1"
+  local remote_url ssh_remote_url
+
+  if ! git -C "$repo_dir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "Skipping remote update because $repo_dir is not a git repository."
+    return
+  fi
+
+  if ! remote_url="$(git -C "$repo_dir" remote get-url --push origin 2>/dev/null)"; then
+    echo "Skipping remote update because the dotfiles repo has no origin remote."
+    return
+  fi
+
+  if ! ssh_remote_url="$(github_ssh_remote "$remote_url")"; then
+    echo "Skipping remote update because origin is not a supported GitHub URL: $remote_url"
+    return
+  fi
+
+  if [[ "$remote_url" == "$ssh_remote_url" ]]; then
+    echo "Dotfiles origin already uses SSH: $ssh_remote_url"
+    return
+  fi
+
+  git -C "$repo_dir" remote set-url origin "$ssh_remote_url"
+  echo "Updated dotfiles origin to SSH: $ssh_remote_url"
+}
+
+test_github_ssh() {
+  local status=0
+
+  set +e
+  ssh -o StrictHostKeyChecking=accept-new -T git@github.com
+  status=$?
+  set -e
+
+  case "$status" in
+    1)
+      echo "GitHub SSH authentication looks good."
+      ;;
+    255)
+      echo "GitHub SSH test failed."
+      exit 1
+      ;;
+    *)
+      echo "GitHub SSH test exited with status $status."
+      ;;
+  esac
+}
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "gh is required. Run ./setup-a-new-machine.sh first."
+  exit 1
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "git is required."
+  exit 1
+fi
+
+if ! command -v ssh >/dev/null 2>&1; then
+  echo "ssh is required."
+  exit 1
+fi
+
+SCRIPT_DIR="$(resolve_script_dir "${BASH_SOURCE[0]}")"
+DOTFILES_REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+echo "Starting GitHub CLI authentication with SSH for github.com..."
+gh auth login --hostname github.com --git-protocol ssh --web
+gh config set git_protocol ssh --host github.com
+
+update_dotfiles_remote_to_ssh "$DOTFILES_REPO_DIR"
+test_github_ssh
