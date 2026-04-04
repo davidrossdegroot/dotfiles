@@ -4,10 +4,16 @@ Used this for a MacBook Air in 2020 and a Mac mini in February 2025.
 
 ## Canonical bootstrap flow
 
-1. Install Xcode Command Line Tools and Homebrew.
-2. Clone this repo.
-3. Sign in to the Mac App Store if you want `mas` to install App Store apps.
-4. Run:
+1. Install Xcode Command Line Tools:
+
+```bash
+xcode-select --install
+```
+
+2. Install Homebrew.
+3. Clone this repo.
+4. Sign in to the Mac App Store if you want `mas` to install App Store apps.
+5. Run:
 
 ```bash
 ./setup-a-new-machine.sh
@@ -28,6 +34,17 @@ This bootstrap assumes macOS or Xcode Command Line Tools already provide:
 - `zsh`
 
 Those are intentionally not installed from Homebrew.
+
+## Which Script Does What
+
+`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install CLI tools, casks, and optional Mac App Store apps. It does not symlink repo files into `$HOME`.
+
+`./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages, and it symlinks every file in `bin/` into `~/bin`. It does not install Homebrew packages, casks, or App Store apps.
+
+If you are setting up a fresh machine, the intended order is:
+
+1. Run `./setup-a-new-machine.sh` to install software.
+2. Review `./move-in.sh`, then run it if you want the managed dotfiles linked into `$HOME` and the repo's `bin/*` scripts symlinked into `~/bin`.
 
 ## What Gets Installed
 
@@ -97,16 +114,26 @@ Mac preferences that still need to be done manually:
 
 ## Dotfiles And Helper Scripts
 
-`move-in.sh` can symlink repo files into `$HOME`, but it is still broader than it should be. Review it before using it on a fresh machine.
+Run `./move-in.sh` to link the dotfiles this repo intentionally manages in `$HOME`:
 
-If you want the helper scripts on your `PATH`:
+- `.aliases`
+- `.exports`
+- `.extras`
+- `.functions`
+- `.gitconfig`
+- `.zshrc`
 
-```bash
-mkdir -p ~/bin
-cp bin/* ~/bin/
-```
+It also symlinks every file in this repo's `bin/` directory into `~/bin`.
 
-`bin/symlinkToDotfilesRepo.sh` is also useful for moving files into the dotfiles repo and replacing them with symlinks.
+It does not link repo documentation, bootstrap scripts, or `Brewfile` by default.
+
+That means these helper scripts are available on your `PATH` as symlinks from `~/bin`:
+
+- `add-ruby`
+- `pull-request.sh`
+- `symlinkToDotfilesRepo.sh`
+
+`bin/symlinkToDotfilesRepo.sh` is useful for moving files into the dotfiles repo and replacing them with symlinks.
 
 ## Postgres
 
