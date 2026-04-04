@@ -4,10 +4,16 @@ Used this for a MacBook Air in 2020 and a Mac mini in February 2025.
 
 ## Canonical bootstrap flow
 
-1. Install Xcode Command Line Tools and Homebrew.
-2. Clone this repo.
-3. Sign in to the Mac App Store if you want `mas` to install App Store apps.
-4. Run:
+1. Install Xcode Command Line Tools:
+
+```bash
+xcode-select --install
+```
+
+2. Install Homebrew.
+3. Clone this repo.
+4. Sign in to the Mac App Store if you want `mas` to install App Store apps.
+5. Run:
 
 ```bash
 ./setup-a-new-machine.sh
