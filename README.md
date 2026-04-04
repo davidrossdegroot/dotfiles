@@ -35,6 +35,18 @@ This bootstrap assumes macOS or Xcode Command Line Tools already provide:
 
 Those are intentionally not installed from Homebrew.
 
+## Which Script Does What
+
+`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install CLI tools, casks, and optional Mac App Store apps. It does not symlink repo files into `$HOME`.
+
+`./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages. It does not install Homebrew packages, casks, App Store apps, or helper scripts.
+
+If you are setting up a fresh machine, the intended order is:
+
+1. Run `./setup-a-new-machine.sh` to install software.
+2. Review `./move-in.sh`, then run it if you want these dotfiles linked into `$HOME`.
+3. Copy `bin/*` into `~/bin` separately if you want those helper scripts on your `PATH`.
+
 ## What Gets Installed
 
 Package installs are managed through `brew bundle` and include:
