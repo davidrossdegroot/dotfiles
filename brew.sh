@@ -20,7 +20,9 @@ append_bundle_skip_values() {
     current_value+="$value"
   done
 
-  declare -gx "$env_var_name=$current_value"
+  printf -v "$env_var_name" '%s' "$current_value"
+  # shellcheck disable=SC2163
+  export "$env_var_name"
 }
 
 skip_casks_for_brewfile() {
@@ -87,6 +89,16 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
+run_brew_bundle() {
+  local brewfile_path="$1"
+
+  if [[ ${#brew_bundle_args[@]} -gt 0 ]]; then
+    brew bundle "$subcommand" --file="$brewfile_path" "${brew_bundle_args[@]}"
+  else
+    brew bundle "$subcommand" --file="$brewfile_path"
+  fi
+}
+
 if [[ "${SKIP_BREW_UPDATE:-0}" == "1" ]]; then
   echo "Skipping brew update because SKIP_BREW_UPDATE=1"
 else
@@ -94,7 +106,7 @@ else
   brew update
 fi
 
-brew bundle "$subcommand" --file="$BREWFILE" "${brew_bundle_args[@]}"
+run_brew_bundle "$BREWFILE"
 
 if [[ "$install_optional_tools" == "1" ]]; then
   if [[ ! -f "$OPTIONAL_BREWFILE" ]]; then
@@ -103,7 +115,7 @@ if [[ "$install_optional_tools" == "1" ]]; then
   fi
 
   skip_casks_for_brewfile "$OPTIONAL_BREWFILE"
-  brew bundle "$subcommand" --file="$OPTIONAL_BREWFILE" "${brew_bundle_args[@]}"
+  run_brew_bundle "$OPTIONAL_BREWFILE"
 else
   echo "Skipping optional CLI extras. Re-run with --optional-tools or INSTALL_OPTIONAL_TOOLS=1 to include them."
 fi
