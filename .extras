@@ -2,9 +2,11 @@
 [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
 
 # default ruby
+# >>> dotfiles chruby >>>
 ruby_install_root="${RUBIES_INSTALL_ROOT:-$HOME/.rubies}"
 if command -v chruby >/dev/null 2>&1; then
-  if [[ -d "$ruby_install_root/4.0.1" || -d "$ruby_install_root/ruby-4.0.1" ]]; then
-    chruby 4.0.1
+  if [[ -d "$ruby_install_root/4.0.2" || -d "$ruby_install_root/ruby-4.0.2" ]]; then
+    chruby 4.0.2
   fi
 fi
+# <<< dotfiles chruby <<<
