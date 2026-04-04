@@ -7,6 +7,18 @@
 # Usage: gbs <branch-name>
 # Example: gbs feature/login-page
 
+if [[ -n "${ZSH_VERSION:-}" ]]; then
+  DOTFILES_FUNCTIONS_SOURCE="${(%):-%N}"
+elif [[ -n "${BASH_SOURCE[0]:-}" ]]; then
+  DOTFILES_FUNCTIONS_SOURCE="${BASH_SOURCE[0]}"
+else
+  DOTFILES_FUNCTIONS_SOURCE="$HOME/.functions"
+fi
+
+if [[ "$DOTFILES_FUNCTIONS_SOURCE" != /* ]]; then
+  DOTFILES_FUNCTIONS_SOURCE="$(cd "$(dirname "$DOTFILES_FUNCTIONS_SOURCE")" >/dev/null 2>&1 && pwd)/$(basename "$DOTFILES_FUNCTIONS_SOURCE")"
+fi
+
 gbs() {
   if [ -z "$1" ]; then
     echo "Usage: gbs <branch-name>"
@@ -21,4 +33,83 @@ gbs() {
     echo "🚀 Creating and switching to new branch '$BRANCH'"
     git switch -c "$BRANCH"
   fi
+}
+
+_dotfiles_repo_dir() {
+  local functions_path="$DOTFILES_FUNCTIONS_SOURCE"
+  local resolved_path=""
+
+  if [[ -L "$functions_path" ]]; then
+    resolved_path="$(readlink "$functions_path")"
+  elif [[ -f "$functions_path" ]]; then
+    resolved_path="$functions_path"
+  fi
+
+  [[ -n "$resolved_path" ]] || return 1
+
+  cd "$(dirname "$resolved_path")" >/dev/null 2>&1 && pwd
+}
+
+_brew_first_non_flag_arg() {
+  local arg
+
+  for arg in "$@"; do
+    if [[ "$arg" == "--" ]]; then
+      break
+    fi
+
+    if [[ "$arg" != -* ]]; then
+      printf "%s\n" "$arg"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+_prompt_to_update_brewfile() {
+  local dotfiles_dir=""
+  local brewfile_path=""
+  local optional_brewfile_path=""
+  local reply=""
+
+  [[ $- == *i* ]] || return 0
+  [[ -t 0 && -t 1 ]] || return 0
+
+  dotfiles_dir="$(_dotfiles_repo_dir)" || return 0
+  brewfile_path="$dotfiles_dir/Brewfile"
+  optional_brewfile_path="$dotfiles_dir/Brewfile.optional"
+
+  [[ -f "$brewfile_path" ]] || return 0
+
+  printf "\nHomebrew install finished. Review %s" "$brewfile_path"
+  if [[ -f "$optional_brewfile_path" ]]; then
+    printf " or %s" "$optional_brewfile_path"
+  fi
+  printf "? [y/N] "
+  read -r reply
+
+  case "$reply" in
+    y|Y|yes|Yes|YES)
+      printf "Update %s if this should be part of your default setup.\n" "$brewfile_path"
+      if [[ -f "$optional_brewfile_path" ]]; then
+        printf "Use %s for opt-in tools.\n" "$optional_brewfile_path"
+      fi
+      ;;
+  esac
+}
+
+brew() {
+  local subcommand=""
+  local exit_code=0
+
+  subcommand="$(_brew_first_non_flag_arg "$@")"
+  command brew "$@"
+  exit_code=$?
+
+  if [[ $exit_code -eq 0 && "$subcommand" == "install" ]]; then
+    _prompt_to_update_brewfile
+  fi
+
+  return "$exit_code"
 }
