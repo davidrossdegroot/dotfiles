@@ -39,13 +39,12 @@ Those are intentionally not installed from Homebrew.
 
 `./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install CLI tools, casks, and optional Mac App Store apps. It does not symlink repo files into `$HOME`.
 
-`./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages. It does not install Homebrew packages, casks, App Store apps, or helper scripts.
+`./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages, and it symlinks every file in `bin/` into `~/bin`. It does not install Homebrew packages, casks, or App Store apps.
 
 If you are setting up a fresh machine, the intended order is:
 
 1. Run `./setup-a-new-machine.sh` to install software.
-2. Review `./move-in.sh`, then run it if you want these dotfiles linked into `$HOME`.
-3. Copy `bin/*` into `~/bin` separately if you want those helper scripts on your `PATH`.
+2. Review `./move-in.sh`, then run it if you want the managed dotfiles linked into `$HOME` and the repo's `bin/*` scripts symlinked into `~/bin`.
 
 ## What Gets Installed
 
@@ -124,16 +123,17 @@ Run `./move-in.sh` to link the dotfiles this repo intentionally manages in `$HOM
 - `.gitconfig`
 - `.zshrc`
 
-It does not link repo documentation, bootstrap scripts, `Brewfile`, or `bin/*` by default.
+It also symlinks every file in this repo's `bin/` directory into `~/bin`.
 
-If you want the helper scripts on your `PATH`:
+It does not link repo documentation, bootstrap scripts, or `Brewfile` by default.
 
-```bash
-mkdir -p ~/bin
-cp bin/* ~/bin/
-```
+That means these helper scripts are available on your `PATH` as symlinks from `~/bin`:
 
-`bin/symlinkToDotfilesRepo.sh` is also useful for moving files into the dotfiles repo and replacing them with symlinks.
+- `add-ruby`
+- `pull-request.sh`
+- `symlinkToDotfilesRepo.sh`
+
+`bin/symlinkToDotfilesRepo.sh` is useful for moving files into the dotfiles repo and replacing them with symlinks.
 
 ## Postgres
 

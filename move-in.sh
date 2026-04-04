@@ -5,7 +5,7 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Only link the files this repo intentionally manages in $HOME.
-MANAGED_FILES=(
+MANAGED_HOME_FILES=(
   ".aliases"
   ".exports"
   ".extras"
@@ -22,12 +22,14 @@ fi
 
 echo "Restoring managed symlinks from $DOTFILES_DIR to $HOME..."
 
-for RELATIVE_PATH in "${MANAGED_FILES[@]}"; do
-  FILE="$DOTFILES_DIR/$RELATIVE_PATH"
+link_managed_path() {
+  local RELATIVE_PATH="$1"
+  local FILE="$DOTFILES_DIR/$RELATIVE_PATH"
+  local TARGET_PATH
 
   if [[ ! -e "$FILE" ]]; then
     echo "Skipping missing managed file: $FILE"
-    continue
+    return
   fi
 
   # Target path in the home directory
@@ -39,7 +41,7 @@ for RELATIVE_PATH in "${MANAGED_FILES[@]}"; do
   # Skip if already linked correctly.
   if [[ -L "$TARGET_PATH" ]] && [[ "$(readlink "$TARGET_PATH")" == "$FILE" ]]; then
     echo "Already linked: $TARGET_PATH"
-    continue
+    return
   fi
 
   # Check if the target file already exists
@@ -47,7 +49,7 @@ for RELATIVE_PATH in "${MANAGED_FILES[@]}"; do
     read -r -p "File $TARGET_PATH already exists. Overwrite? (y/n/cancel): " choice
     case "$choice" in
       y|Y ) rm -rf -- "$TARGET_PATH"; echo "Overwriting $TARGET_PATH";;
-      n|N ) echo "Skipping $TARGET_PATH"; continue;;
+      n|N ) echo "Skipping $TARGET_PATH"; return;;
       * ) echo "Operation canceled."; exit 1;;
     esac
   fi
@@ -55,6 +57,19 @@ for RELATIVE_PATH in "${MANAGED_FILES[@]}"; do
   # Create the symlink
   ln -s "$FILE" "$TARGET_PATH"
   echo "Symlinked $TARGET_PATH -> $FILE"
+}
+
+for RELATIVE_PATH in "${MANAGED_HOME_FILES[@]}"; do
+  link_managed_path "$RELATIVE_PATH"
 done
+
+if [[ -d "$DOTFILES_DIR/bin" ]]; then
+  shopt -s nullglob
+  for FILE in "$DOTFILES_DIR"/bin/*; do
+    [[ -f "$FILE" ]] || continue
+    link_managed_path "${FILE#"$DOTFILES_DIR"/}"
+  done
+  shopt -u nullglob
+fi
 
 echo "Symlink restoration complete!"
