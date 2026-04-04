@@ -16,8 +16,12 @@ export PATH="$HOMEBREW_PREFIX/bin:$PATH"
 # nvm
 export NVM_DIR="$HOME/.nvm"
 if [[ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
-  [[ -d "$NVM_DIR" ]] || mkdir -p "$NVM_DIR"
-  \. "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+  if [[ -e "$NVM_DIR" && ! -d "$NVM_DIR" ]]; then
+    echo "nvm: NVM_DIR '$NVM_DIR' exists but is not a directory; skipping initialization." >&2
+  else
+    [[ -d "$NVM_DIR" ]] || mkdir -p "$NVM_DIR"
+    \. "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+  fi
 fi
 
 # pyenv
