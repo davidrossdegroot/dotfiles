@@ -53,7 +53,7 @@ Those are intentionally not installed from Homebrew.
 
 ## Which Script Does What
 
-`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
+`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. After that, it uses Homebrew `nvm` to install the current Node LTS release and installs the Codex and Claude Code CLIs globally with npm. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
 
 `./bin/setup-github-auth` is the GitHub auth step after bootstrap. It uses the installed GitHub CLI to sign in with `--git-protocol ssh`, lets GitHub CLI create or upload an SSH key if needed, tests the SSH connection to GitHub, and switches this repo's `origin` remote from HTTPS to SSH.
 
@@ -74,6 +74,12 @@ Package installs are managed through `brew bundle` and include:
 - Optional Homebrew formulae from `Brewfile.optional` when `--optional-tools` or `INSTALL_OPTIONAL_TOOLS=1` is used
 - GUI apps through Homebrew Cask
 - Mac App Store apps through `mas`
+
+`./setup-a-new-machine.sh` also installs:
+
+- the current Node LTS release through Homebrew `nvm`
+- `@openai/codex` as the `codex` CLI
+- `@anthropic-ai/claude-code` as the `claude` CLI
 
 Required/default formulae now include the core Unix tooling this repo expects on every machine:
 
@@ -137,14 +143,28 @@ Install whatever Oh My Zsh plugins you want, for example:
 
 This repo expects `nvm` to use `~/.nvm`.
 
-After opening a new shell, run:
+`./setup-a-new-machine.sh` installs the current Node LTS release through Homebrew `nvm`, then installs:
+
+- `@openai/codex`
+- `@anthropic-ai/claude-code`
+
+Useful verification commands:
 
 ```bash
-mkdir -p ~/.nvm
-nvm install --lts
 node --version
 npm --version
+codex --version
+claude --version
 ```
+
+AI coding tool authentication:
+
+```bash
+codex login
+claude
+```
+
+`codex login` signs the Codex CLI into your OpenAI account. Starting `claude` prompts you to authenticate Claude Code with either a Claude subscription or Anthropic Console account.
 
 GitHub setup:
 
@@ -198,11 +218,13 @@ That means these helper scripts are available on your `PATH` as symlinks from `~
 - `add-ruby`
 - `capture-dock`
 - `pull-request.sh`
+- `setup-ai-coding-tools`
 - `setup-github-auth`
 - `setup-dock`
 - `symlinkToDotfilesRepo.sh`
 
 `bin/symlinkToDotfilesRepo.sh` is useful for moving files into the dotfiles repo and replacing them with symlinks.
+`bin/setup-ai-coding-tools` installs the current Node LTS release through Homebrew `nvm`, then installs Codex and Claude Code globally with npm.
 `bin/capture-dock` snapshots the current Dock into `dock/layout.sh`.
 `bin/setup-dock` uses `dockutil` to recreate the Dock from `dock/layout.sh`.
 `bin/setup-github-auth` authenticates GitHub with `gh`, sets SSH as the preferred git protocol, tests the SSH connection, and switches this repo's `origin` remote to SSH.

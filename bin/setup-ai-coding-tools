@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required. Run ./setup-a-new-machine.sh after installing brew."
+  exit 1
+fi
+
+HOMEBREW_PREFIX="$(brew --prefix)"
+NVM_SH="$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+
+if [[ ! -s "$NVM_SH" ]]; then
+  echo "nvm is required. Run ./brew.sh first to install it from the Brewfile."
+  exit 1
+fi
+
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+mkdir -p "$NVM_DIR"
+
+# shellcheck disable=SC1090
+. "$NVM_SH"
+
+nvm install --lts
+nvm alias default "lts/*"
+nvm use --lts >/dev/null
+
+npm install -g @openai/codex @anthropic-ai/claude-code
+
+echo "Installed Node $(node --version) and npm $(npm --version)."
+echo "Installed Codex and Claude Code globally with npm."
+echo "Next steps: run 'codex login' and start 'claude' once to finish authentication."
