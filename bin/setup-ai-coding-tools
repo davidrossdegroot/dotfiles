@@ -24,8 +24,9 @@ nvm install --lts
 nvm alias default "lts/*"
 nvm use --lts >/dev/null
 
-npm install -g @openai/codex @anthropic-ai/claude-code
+npm install -g @openai/codex
 
 echo "Installed Node $(node --version) and npm $(npm --version)."
-echo "Installed Codex and Claude Code globally with npm."
+echo "Installed Codex globally with npm."
+echo "Claude Code is installed from the Brewfile through Homebrew Cask."
 echo "Next steps: run 'codex login' and start 'claude' once to finish authentication."
