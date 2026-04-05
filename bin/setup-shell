@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "git is required."
+  exit 1
+fi
+
+OH_MY_ZSH_DIR="${ZSH:-$HOME/.oh-my-zsh}"
+OH_MY_ZSH_CUSTOM_DIR="${ZSH_CUSTOM:-$OH_MY_ZSH_DIR/custom}"
+PLUGIN_DIR="$OH_MY_ZSH_CUSTOM_DIR/plugins"
+
+clone_repo() {
+  local repo_url="$1"
+  local destination="$2"
+  local label="$3"
+
+  mkdir -p "$(dirname "$destination")"
+  git clone --depth 1 "$repo_url" "$destination" >/dev/null
+  echo "Installed $label at $destination."
+}
+
+update_repo() {
+  local destination="$1"
+  local label="$2"
+
+  if ! git -C "$destination" diff --quiet --ignore-submodules --exit-code; then
+    echo "Skipping $label update because $destination has local modifications."
+    return
+  fi
+
+  if ! git -C "$destination" diff --cached --quiet --ignore-submodules --exit-code; then
+    echo "Skipping $label update because $destination has staged changes."
+    return
+  fi
+
+  git -C "$destination" pull --ff-only >/dev/null
+  echo "Updated $label at $destination."
+}
+
+ensure_repo() {
+  local repo_url="$1"
+  local destination="$2"
+  local label="$3"
+
+  if [[ -d "$destination/.git" ]]; then
+    update_repo "$destination" "$label"
+    return
+  fi
+
+  if [[ -e "$destination" ]]; then
+    echo "Skipping $label because $destination exists and is not a git checkout."
+    return
+  fi
+
+  clone_repo "$repo_url" "$destination" "$label"
+}
+
+ensure_repo "https://github.com/ohmyzsh/ohmyzsh.git" "$OH_MY_ZSH_DIR" "oh-my-zsh"
+ensure_repo "https://github.com/zsh-users/zsh-autosuggestions.git" "$PLUGIN_DIR/zsh-autosuggestions" "zsh-autosuggestions"
+ensure_repo "https://github.com/joshskidmore/zsh-fzf-history-search.git" "$PLUGIN_DIR/zsh-fzf-history-search" "zsh-fzf-history-search"
+
+echo "Managed shell tooling is ready."
