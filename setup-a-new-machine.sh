@@ -4,23 +4,24 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if ! command -v brew >/dev/null 2>&1; then
-  echo "Homebrew is not installed. Install it first: https://brew.sh/"
-  exit 1
+	echo "Homebrew is not installed. Install it first: https://brew.sh/"
+	exit 1
 fi
 
 subcommand="install"
 if [[ $# -gt 0 ]]; then
-  case "$1" in
-  install | check | list | cleanup | upgrade)
-    subcommand="$1"
-    ;;
-  esac
+	case "$1" in
+	install | check | list | cleanup | upgrade)
+		subcommand="$1"
+		;;
+	esac
 fi
 
 SKIP_NVM_HINT=1 "$SCRIPT_DIR/brew.sh" "$@"
 
 if [[ "$subcommand" == "install" || "$subcommand" == "upgrade" ]]; then
-  "$SCRIPT_DIR/bin/setup-ai-coding-tools"
+	"$SCRIPT_DIR/bin/setup-shell"
+	"$SCRIPT_DIR/bin/setup-ai-coding-tools"
 fi
 
 cat <<'EOF'
@@ -36,8 +37,8 @@ Machine setup checklist:
 
 Shell setup:
 
-- Install oh-my-zsh: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-- Install the zsh plugins you want, for example `zsh-autosuggestions`
+- `./setup-a-new-machine.sh` installs and updates the repo-managed shell stack: `oh-my-zsh`, `zsh-autosuggestions`, and `zsh-fzf-history-search`
+- Re-run `./bin/setup-shell` any time you want to refresh that managed shell tooling without re-running the full bootstrap
 - `direnv` hooks are enabled automatically in `~/.zshrc` when `direnv` is installed
 - `zoxide` hooks are enabled automatically in `~/.zshrc` when optional tools are installed
 - This repo expects `nvm` to use `~/.nvm`
