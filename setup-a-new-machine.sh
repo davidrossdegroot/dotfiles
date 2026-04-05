@@ -4,24 +4,24 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if ! command -v brew >/dev/null 2>&1; then
-	echo "Homebrew is not installed. Install it first: https://brew.sh/"
-	exit 1
+  echo "Homebrew is not installed. Install it first: https://brew.sh/"
+  exit 1
 fi
 
 subcommand="install"
 if [[ $# -gt 0 ]]; then
-	case "$1" in
-	install | check | list | cleanup | upgrade)
-		subcommand="$1"
-		;;
-	esac
+  case "$1" in
+  install | check | list | cleanup | upgrade)
+    subcommand="$1"
+    ;;
+  esac
 fi
 
 SKIP_NVM_HINT=1 "$SCRIPT_DIR/brew.sh" "$@"
 
 if [[ "$subcommand" == "install" || "$subcommand" == "upgrade" ]]; then
-	"$SCRIPT_DIR/bin/setup-shell"
-	"$SCRIPT_DIR/bin/setup-ai-coding-tools"
+  "$SCRIPT_DIR/bin/setup-shell"
+  "$SCRIPT_DIR/bin/setup-ai-coding-tools"
 fi
 
 cat <<'EOF'
