@@ -48,7 +48,7 @@ Shell setup:
 
 GitHub setup:
 
-- Run `./bin/setup-github-auth` after this script finishes to sign in with `gh`, let GitHub CLI create or upload an SSH key if needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH
+- Run `./bin/setup-github-auth` after this script finishes to sign in with `gh`, configure the `open` alias for `repo view --web`, let GitHub CLI create or upload an SSH key if needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH
 
 Repo-managed files:
 

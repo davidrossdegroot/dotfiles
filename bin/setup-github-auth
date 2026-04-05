@@ -114,6 +114,7 @@ DOTFILES_REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 echo "Starting GitHub CLI authentication with SSH for github.com..."
 gh auth login --hostname github.com --git-protocol ssh --web
 gh config set git_protocol ssh --host github.com
+gh alias set --clobber open 'repo view --web'
 
 update_dotfiles_remote_to_ssh "$DOTFILES_REPO_DIR"
 test_github_ssh

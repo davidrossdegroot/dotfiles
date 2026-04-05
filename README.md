@@ -37,7 +37,7 @@ SKIP_APP_STORE=1 ./setup-a-new-machine.sh
 ./bin/setup-github-auth
 ```
 
-That helper uses `gh` to authenticate GitHub in the browser, set GitHub's preferred git protocol to SSH, prompt to create or upload an SSH key when needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH.
+That helper uses `gh` to authenticate GitHub in the browser, set GitHub's preferred git protocol to SSH, add an `open` alias for `repo view --web`, prompt to create or upload an SSH key when needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH.
 
 Cloning over HTTPS keeps SSH setup out of the critical path for a fresh machine. If the repo is private, use whatever HTTPS auth flow gets the first clone onto disk, then switch the machine to SSH with `./bin/setup-github-auth`.
 
@@ -55,7 +55,7 @@ Those are intentionally not installed from Homebrew.
 
 `./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. That includes the `claude-code` cask for Claude Code. After that, it uses Homebrew `nvm` to install the current Node LTS release and installs the Codex CLI globally with npm. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
 
-`./bin/setup-github-auth` is the GitHub auth step after bootstrap. It uses the installed GitHub CLI to sign in with `--git-protocol ssh`, lets GitHub CLI create or upload an SSH key if needed, tests the SSH connection to GitHub, and switches this repo's `origin` remote from HTTPS to SSH.
+`./bin/setup-github-auth` is the GitHub auth step after bootstrap. It uses the installed GitHub CLI to sign in with `--git-protocol ssh`, configures the `open` alias for `repo view --web`, lets GitHub CLI create or upload an SSH key if needed, tests the SSH connection to GitHub, and switches this repo's `origin` remote from HTTPS to SSH.
 
 `./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages, and it symlinks every file in `bin/` into `~/bin`. It does not install Homebrew packages, casks, or App Store apps.
 
@@ -175,7 +175,7 @@ GitHub setup:
 ./bin/setup-github-auth
 ```
 
-That helper opens the GitHub CLI browser flow, sets GitHub's git protocol to SSH, prompts to create or upload an SSH key if needed, tests `ssh -T git@github.com`, and updates this repo's `origin` remote to SSH.
+That helper opens the GitHub CLI browser flow, sets GitHub's git protocol to SSH, configures the `open` alias for `repo view --web`, prompts to create or upload an SSH key if needed, tests `ssh -T git@github.com`, and updates this repo's `origin` remote to SSH.
 
 Mac preferences that still need to be done manually:
 
@@ -230,7 +230,7 @@ That means these helper scripts are available on your `PATH` as symlinks from `~
 `bin/setup-ai-coding-tools` installs the current Node LTS release through Homebrew `nvm`, then installs Codex globally with npm.
 `bin/capture-dock` snapshots the current Dock into `dock/layout.sh`.
 `bin/setup-dock` uses `dockutil` to recreate the Dock from `dock/layout.sh`.
-`bin/setup-github-auth` authenticates GitHub with `gh`, sets SSH as the preferred git protocol, tests the SSH connection, and switches this repo's `origin` remote to SSH.
+`bin/setup-github-auth` authenticates GitHub with `gh`, sets SSH as the preferred git protocol, configures the `open` alias for `repo view --web`, tests the SSH connection, and switches this repo's `origin` remote to SSH.
 
 ## Postgres
 
