@@ -43,6 +43,8 @@ Cloning over HTTPS keeps SSH setup out of the critical path for a fresh machine.
 
 The package source of truth is `Brewfile` for the default bootstrap and `Brewfile.optional` for opt-in extras. `setup-a-new-machine.sh` is the human-friendly entrypoint, and `brew.sh` is the package-only helper that runs `brew bundle`.
 
+The shell toolchain that this repo expects is also managed during bootstrap. `./setup-a-new-machine.sh` installs or updates `oh-my-zsh`, `zsh-autosuggestions`, and `zsh-fzf-history-search` through `./bin/setup-shell`, so the default shell path is explicit instead of manual.
+
 This bootstrap assumes macOS or Xcode Command Line Tools already provide:
 
 - `bash`
@@ -53,7 +55,9 @@ Those are intentionally not installed from Homebrew.
 
 ## Which Script Does What
 
-`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. That includes the `claude-code` cask for Claude Code. After that, it uses Homebrew `nvm` to install the current Node LTS release and installs the Codex CLI globally with npm. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
+`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. That includes the `claude-code` cask for Claude Code. After that, it runs `./bin/setup-shell` to install or update the repo-managed Zsh stack, then uses Homebrew `nvm` to install the current Node LTS release and installs the Codex CLI globally with npm. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
+
+`./bin/setup-shell` is the shell bootstrap helper. It installs or updates `oh-my-zsh`, `zsh-autosuggestions`, and `zsh-fzf-history-search` in the standard Oh My Zsh locations without overwriting the repo-managed `~/.zshrc`. Re-run it whenever you want to refresh those shell dependencies outside the full machine bootstrap.
 
 `./bin/setup-github-auth` is the GitHub auth step after bootstrap. It uses the installed GitHub CLI to sign in with `--git-protocol ssh`, configures the `open` alias for `repo view --web`, lets GitHub CLI create or upload an SSH key if needed, tests the SSH connection to GitHub, and switches this repo's `origin` remote from HTTPS to SSH.
 
@@ -77,6 +81,9 @@ Package installs are managed through `brew bundle` and include:
 
 `./setup-a-new-machine.sh` also installs:
 
+- `oh-my-zsh` in `~/.oh-my-zsh`
+- `zsh-autosuggestions` in `~/.oh-my-zsh/custom/plugins/zsh-autosuggestions`
+- `zsh-fzf-history-search` in `~/.oh-my-zsh/custom/plugins/zsh-fzf-history-search`
 - the current Node LTS release through Homebrew `nvm`
 - `@openai/codex` as the `codex` CLI after Node is installed
 
@@ -130,16 +137,19 @@ Managed App Store installs currently include:
 
 ## Manual Follow-Up
 
-Shell setup:
+Managed shell setup:
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+./bin/setup-shell
 ```
 
-Install whatever Oh My Zsh plugins you want, for example:
+That helper is already called by `./setup-a-new-machine.sh`. It manages the shell stack this repo expects:
 
+- `oh-my-zsh`
 - `zsh-autosuggestions`
 - `zsh-fzf-history-search`
+
+`.zshrc` stays safe before and after those tools are installed because it only sources Oh My Zsh and plugin directories when they exist.
 
 This repo expects `nvm` to use `~/.nvm`.
 
@@ -223,6 +233,7 @@ That means these helper scripts are available on your `PATH` as symlinks from `~
 - `pull-request.sh`
 - `setup-ai-coding-tools`
 - `setup-github-auth`
+- `setup-shell`
 - `setup-dock`
 - `symlinkToDotfilesRepo.sh`
 
@@ -231,6 +242,7 @@ That means these helper scripts are available on your `PATH` as symlinks from `~
 `bin/capture-dock` snapshots the current Dock into `dock/layout.sh`.
 `bin/setup-dock` uses `dockutil` to recreate the Dock from `dock/layout.sh`.
 `bin/setup-github-auth` authenticates GitHub with `gh`, sets SSH as the preferred git protocol, configures the `open` alias for `repo view --web`, tests the SSH connection, and switches this repo's `origin` remote to SSH.
+`bin/setup-shell` installs or updates the Oh My Zsh framework and the specific plugins this repo enables in `.zshrc`.
 
 ## Postgres
 
