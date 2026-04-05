@@ -17,12 +17,16 @@ fi
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 mkdir -p "$NVM_DIR"
 
+# `nvm.sh` is not consistently `set -u` safe across releases, so disable
+# nounset while sourcing it and running nvm subcommands.
+set +u
 # shellcheck disable=SC1090
 . "$NVM_SH"
 
 nvm install --lts
 nvm alias default "lts/*"
 nvm use --lts >/dev/null
+set -u
 
 npm install -g @openai/codex
 
