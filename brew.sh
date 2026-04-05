@@ -120,8 +120,10 @@ else
   echo "Skipping optional CLI extras. Re-run with --optional-tools or INSTALL_OPTIONAL_TOOLS=1 to include them."
 fi
 
-echo "Run 'nvm install --lts' after opening a new shell."
 echo "If you skipped App Store installs, sign in later and rerun './brew.sh'."
+if [[ "${SKIP_NVM_HINT:-0}" != "1" ]]; then
+  echo "Run 'nvm install --lts' after opening a new shell."
+fi
 if [[ "$install_optional_tools" != "1" ]]; then
   echo "Optional extras available: stow, tmux, zoxide, btop, ncdu, dockutil."
 fi

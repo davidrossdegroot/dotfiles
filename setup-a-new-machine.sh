@@ -8,7 +8,20 @@ if ! command -v brew >/dev/null 2>&1; then
   exit 1
 fi
 
-"$SCRIPT_DIR/brew.sh" "$@"
+subcommand="install"
+if [[ $# -gt 0 ]]; then
+  case "$1" in
+  install | check | list | cleanup | upgrade)
+    subcommand="$1"
+    ;;
+  esac
+fi
+
+SKIP_NVM_HINT=1 "$SCRIPT_DIR/brew.sh" "$@"
+
+if [[ "$subcommand" == "install" || "$subcommand" == "upgrade" ]]; then
+  "$SCRIPT_DIR/bin/setup-ai-coding-tools"
+fi
 
 cat <<'EOF'
 
@@ -28,12 +41,14 @@ Shell setup:
 - `direnv` hooks are enabled automatically in `~/.zshrc` when `direnv` is installed
 - `zoxide` hooks are enabled automatically in `~/.zshrc` when optional tools are installed
 - This repo expects `nvm` to use `~/.nvm`
-- Open a new shell and run `nvm install --lts`
+- `./setup-a-new-machine.sh` installs the current Node LTS release through `nvm`
 - Verify Node is available with `node --version` and `npm --version`
+- Verify the AI coding CLIs with `codex --version` and `claude --version`
+- Run `codex login` and start `claude` once to finish authentication
 
 GitHub setup:
 
-- Run `./bin/setup-github-auth` after this script finishes to sign in with `gh`, let GitHub CLI create or upload an SSH key if needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH
+- Run `./bin/setup-github-auth` after this script finishes to sign in with `gh`, configure the `open` alias for `repo view --web`, let GitHub CLI create or upload an SSH key if needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH
 
 Repo-managed files:
 

@@ -32,6 +32,7 @@ brew "wget"
 # GUI apps installed with Homebrew Cask.
 cask "1password"
 cask "claude"
+cask "claude-code"
 cask "chatgpt"
 cask "docker-desktop"
 cask "google-chrome"

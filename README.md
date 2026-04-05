@@ -37,7 +37,7 @@ SKIP_APP_STORE=1 ./setup-a-new-machine.sh
 ./bin/setup-github-auth
 ```
 
-That helper uses `gh` to authenticate GitHub in the browser, set GitHub's preferred git protocol to SSH, prompt to create or upload an SSH key when needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH.
+That helper uses `gh` to authenticate GitHub in the browser, set GitHub's preferred git protocol to SSH, add an `open` alias for `repo view --web`, prompt to create or upload an SSH key when needed, test `ssh -T git@github.com`, and switch this repo's `origin` remote from HTTPS to SSH.
 
 Cloning over HTTPS keeps SSH setup out of the critical path for a fresh machine. If the repo is private, use whatever HTTPS auth flow gets the first clone onto disk, then switch the machine to SSH with `./bin/setup-github-auth`.
 
@@ -53,9 +53,9 @@ Those are intentionally not installed from Homebrew.
 
 ## Which Script Does What
 
-`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
+`./setup-a-new-machine.sh` is the software bootstrap step for a new Mac. It runs `./brew.sh`, which runs `brew bundle` against `Brewfile` to install the default CLI tools, casks, and optional Mac App Store apps. That includes the `claude-code` cask for Claude Code. After that, it uses Homebrew `nvm` to install the current Node LTS release and installs the Codex CLI globally with npm. Pass `--optional-tools` or set `INSTALL_OPTIONAL_TOOLS=1` to also install the extras from `Brewfile.optional`. It does not symlink repo files into `$HOME`.
 
-`./bin/setup-github-auth` is the GitHub auth step after bootstrap. It uses the installed GitHub CLI to sign in with `--git-protocol ssh`, lets GitHub CLI create or upload an SSH key if needed, tests the SSH connection to GitHub, and switches this repo's `origin` remote from HTTPS to SSH.
+`./bin/setup-github-auth` is the GitHub auth step after bootstrap. It uses the installed GitHub CLI to sign in with `--git-protocol ssh`, configures the `open` alias for `repo view --web`, lets GitHub CLI create or upload an SSH key if needed, tests the SSH connection to GitHub, and switches this repo's `origin` remote from HTTPS to SSH.
 
 `./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages, and it symlinks every file in `bin/` into `~/bin`. It does not install Homebrew packages, casks, or App Store apps.
 
@@ -74,6 +74,11 @@ Package installs are managed through `brew bundle` and include:
 - Optional Homebrew formulae from `Brewfile.optional` when `--optional-tools` or `INSTALL_OPTIONAL_TOOLS=1` is used
 - GUI apps through Homebrew Cask
 - Mac App Store apps through `mas`
+
+`./setup-a-new-machine.sh` also installs:
+
+- the current Node LTS release through Homebrew `nvm`
+- `@openai/codex` as the `codex` CLI after Node is installed
 
 Required/default formulae now include the core Unix tooling this repo expects on every machine:
 
@@ -106,6 +111,7 @@ Notable cask installs include:
 
 - `1password`
 - `claude`
+- `claude-code`
 - `google-chrome`
 - `iterm2`
 - `sublime-text`
@@ -137,14 +143,31 @@ Install whatever Oh My Zsh plugins you want, for example:
 
 This repo expects `nvm` to use `~/.nvm`.
 
-After opening a new shell, run:
+`./setup-a-new-machine.sh` installs the current Node LTS release through Homebrew `nvm`, then installs:
+
+- `@openai/codex`
+
+Claude Code is installed through the `claude-code` Homebrew cask in `Brewfile`.
+
+Useful verification commands:
 
 ```bash
-mkdir -p ~/.nvm
-nvm install --lts
 node --version
 npm --version
+codex --version
+claude --version
 ```
+
+AI coding tool authentication:
+
+```bash
+codex login
+claude
+```
+
+`codex login` signs the Codex CLI in with your ChatGPT account and stores credentials locally. Starting `claude` prompts you to authenticate Claude Code with either a Claude subscription or Anthropic Console account.
+
+Anthropic's quickstart also supports a native install script for Claude Code, but this repo uses the Homebrew cask so the install stays in `Brewfile`.
 
 GitHub setup:
 
@@ -152,7 +175,7 @@ GitHub setup:
 ./bin/setup-github-auth
 ```
 
-That helper opens the GitHub CLI browser flow, sets GitHub's git protocol to SSH, prompts to create or upload an SSH key if needed, tests `ssh -T git@github.com`, and updates this repo's `origin` remote to SSH.
+That helper opens the GitHub CLI browser flow, sets GitHub's git protocol to SSH, configures the `open` alias for `repo view --web`, prompts to create or upload an SSH key if needed, tests `ssh -T git@github.com`, and updates this repo's `origin` remote to SSH.
 
 Mac preferences that still need to be done manually:
 
@@ -198,14 +221,16 @@ That means these helper scripts are available on your `PATH` as symlinks from `~
 - `add-ruby`
 - `capture-dock`
 - `pull-request.sh`
+- `setup-ai-coding-tools`
 - `setup-github-auth`
 - `setup-dock`
 - `symlinkToDotfilesRepo.sh`
 
 `bin/symlinkToDotfilesRepo.sh` is useful for moving files into the dotfiles repo and replacing them with symlinks.
+`bin/setup-ai-coding-tools` installs the current Node LTS release through Homebrew `nvm`, then installs Codex globally with npm.
 `bin/capture-dock` snapshots the current Dock into `dock/layout.sh`.
 `bin/setup-dock` uses `dockutil` to recreate the Dock from `dock/layout.sh`.
-`bin/setup-github-auth` authenticates GitHub with `gh`, sets SSH as the preferred git protocol, tests the SSH connection, and switches this repo's `origin` remote to SSH.
+`bin/setup-github-auth` authenticates GitHub with `gh`, sets SSH as the preferred git protocol, configures the `open` alias for `repo view --web`, tests the SSH connection, and switches this repo's `origin` remote to SSH.
 
 ## Postgres
 
