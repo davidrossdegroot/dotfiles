@@ -1,46 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! command -v dockutil >/dev/null 2>&1; then
-  echo "dockutil is required. Install optional tools with './brew.sh install --optional-tools' first."
-  exit 1
-fi
+resolve_script_path() {
+  local source_path="$1"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  while [[ -L "$source_path" ]]; do
+    local source_dir
+    source_dir="$(cd -P "$(dirname "$source_path")" && pwd)"
+    source_path="$(readlink "$source_path")"
+    if [[ "$source_path" != /* ]]; then
+      source_path="$source_dir/$source_path"
+    fi
+  done
+
+  printf '%s\n' "$source_path"
+}
+
+SCRIPT_PATH="$(resolve_script_path "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
 DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-LAYOUT_FILE="${1:-$DOTFILES_DIR/dock/layout.sh}"
+TARGET_SCRIPT="$DOTFILES_DIR/script/setup-dock"
 
-if [[ ! -f "$LAYOUT_FILE" ]]; then
-  echo "Dock layout not found at $LAYOUT_FILE"
-  echo "Run './bin/capture-dock' to save the current Dock into the repo first."
+if [[ ! -x "$TARGET_SCRIPT" ]]; then
+  echo "Expected setup helper at $TARGET_SCRIPT"
   exit 1
 fi
 
-# shellcheck disable=SC1090
-source "$LAYOUT_FILE"
-
-echo "Resetting Dock from $LAYOUT_FILE..."
-dockutil --no-restart --remove all
-
-for app in "${DOCK_APPS[@]}"; do
-  if [[ -e "$app" ]]; then
-    dockutil --no-restart --add "$app"
-  else
-    echo "Skipping missing Dock app: $app"
-  fi
-done
-
-for item in "${DOCK_OTHERS[@]:-}"; do
-  [[ -n "$item" ]] || continue
-  IFS='|' read -r path view display sort <<<"$item"
-
-  if [[ ! -e "$path" ]]; then
-    echo "Skipping missing Dock item: $path"
-    continue
-  fi
-
-  dockutil --no-restart --add "$path" --section others --view "$view" --display "$display" --sort "$sort"
-done
-
-killall Dock >/dev/null 2>&1 || true
-echo "Dock updated."
+exec "$TARGET_SCRIPT" "$@"
