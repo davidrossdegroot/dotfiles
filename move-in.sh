@@ -14,6 +14,14 @@ MANAGED_HOME_FILES=(
   ".zshrc"
 )
 
+# Only these day-to-day helpers belong on PATH via ~/bin.
+MANAGED_BIN_FILES=(
+  "bin/add-ruby"
+  "bin/capture-dock"
+  "bin/pull-request.sh"
+  "bin/symlinkToDotfilesRepo.sh"
+)
+
 # Ensure the dotfiles directory exists
 if [[ ! -d "$DOTFILES_DIR" ]]; then
   echo "Error: Dotfiles directory not found at $DOTFILES_DIR"
@@ -72,13 +80,8 @@ for RELATIVE_PATH in "${MANAGED_HOME_FILES[@]}"; do
   link_managed_path "$RELATIVE_PATH"
 done
 
-if [[ -d "$DOTFILES_DIR/bin" ]]; then
-  shopt -s nullglob
-  for FILE in "$DOTFILES_DIR"/bin/*; do
-    [[ -f "$FILE" ]] || continue
-    link_managed_path "${FILE#"$DOTFILES_DIR"/}"
-  done
-  shopt -u nullglob
-fi
+for RELATIVE_PATH in "${MANAGED_BIN_FILES[@]}"; do
+  link_managed_path "$RELATIVE_PATH"
+done
 
 echo "Symlink restoration complete!"
