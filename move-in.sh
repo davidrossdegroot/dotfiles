@@ -75,7 +75,7 @@ done
 shopt -s nullglob
 for FILE in "$DOTFILES_DIR"/bin/*; do
   [[ -f "$FILE" ]] || continue
-  RELATIVE_PATH="${FILE#$DOTFILES_DIR/}"
+  RELATIVE_PATH="${FILE#"$DOTFILES_DIR"/}"
   link_managed_path "$RELATIVE_PATH"
 done
 shopt -u nullglob
