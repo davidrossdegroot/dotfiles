@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required."
+  exit 1
+fi
+
+HOMEBREW_PREFIX="$(brew --prefix)"
+NVM_SH="$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+
+if [[ ! -s "$NVM_SH" ]]; then
+  echo "nvm is required. Run ./brew.sh first to install it from the Brewfile."
+  exit 1
+fi
+
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+mkdir -p "$NVM_DIR"
+
+# `nvm.sh` is not consistently `set -u` safe across releases, so disable
+# nounset while sourcing it and running nvm subcommands.
+set +u
+# shellcheck disable=SC1090
+. "$NVM_SH"
+
+reinstall_from=""
+default_node="$(nvm version default 2>/dev/null || true)"
+current_node="$(nvm current 2>/dev/null || true)"
+
+for candidate in "$default_node" "$current_node"; do
+  if [[ -n "$candidate" && "$candidate" != "N/A" && "$candidate" != "none" && "$candidate" != "system" ]]; then
+    reinstall_from="$candidate"
+    break
+  fi
+done
+
+install_args=(--lts)
+if [[ -n "$reinstall_from" ]]; then
+  install_args+=("--reinstall-packages-from=$reinstall_from")
+fi
+
+nvm install "${install_args[@]}"
+nvm alias default "lts/*" >/dev/null
+nvm use --lts >/dev/null
+set -u
+
+if [[ -n "$reinstall_from" ]]; then
+  echo "Reinstalled global npm packages from $reinstall_from."
+fi
+
+echo "Default Node is now $(node --version) with npm $(npm --version)."

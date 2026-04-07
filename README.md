@@ -65,7 +65,7 @@ Those are intentionally not installed from Homebrew.
 
 `./script/setup-dock` is the repo-only Dock restore helper. It uses `dockutil` to recreate the Dock from `dock/layout.sh` when you want this repo's saved Dock layout on a machine.
 
-`./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages, and it symlinks only the intentionally user-facing helpers from `bin/` into `~/bin`. It does not install Homebrew packages, casks, or App Store apps.
+`./move-in.sh` is the dotfile linking step. It creates symlinks for the small set of home-directory config files this repo intentionally manages, and it symlinks the intentionally user-facing helpers from `bin/` into `~/bin`. It does not install Homebrew packages, casks, or App Store apps.
 
 If you are setting up a fresh machine, the intended order is:
 
@@ -73,7 +73,7 @@ If you are setting up a fresh machine, the intended order is:
 2. Run `./setup-a-new-machine.sh` to install software, including `gh`.
 3. Run `./script/setup-github-auth` to authenticate GitHub and switch this repo to SSH.
 4. If you installed optional tools and want this repo's Dock layout, run `./script/setup-dock`.
-5. Review `./move-in.sh`, then run it if you want the managed dotfiles linked into `$HOME` and the curated `bin/*` helpers symlinked into `~/bin`.
+5. Review `./move-in.sh`, then run it if you want the managed dotfiles linked into `$HOME` and the repo's `bin/*` helpers symlinked into `~/bin`.
 
 ## What Gets Installed
 
@@ -232,7 +232,7 @@ This repo intentionally splits helpers into two places:
 - `bin/` for user-facing commands that should be available in `~/bin`
 - `script/` for repo-only setup/bootstrap helpers that should be run from this checkout
 
-`./move-in.sh` symlinks only the curated `bin/` commands into `~/bin`.
+`./move-in.sh` symlinks the regular files in `bin/` into `~/bin`.
 
 It does not link repo documentation, `script/` helpers, or `Brewfile*` by default.
 
@@ -242,6 +242,7 @@ That means these helper scripts are available on your `PATH` as symlinks from `~
 - `capture-dock`
 - `pull-request.sh`
 - `symlinkToDotfilesRepo.sh`
+- `update-node-lts`
 
 Repo-only setup helpers now live in `script/`:
 
