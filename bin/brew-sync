@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required."
+  exit 1
+fi
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+brewfile="$repo_root/Brewfile"
+
+if [[ ! -f "$brewfile" ]]; then
+  echo "Brewfile not found at $brewfile"
+  exit 1
+fi
+
+temp_brewfile="$(mktemp)"
+trap 'rm -f "$temp_brewfile"' EXIT
+
+HOMEBREW_NO_AUTO_UPDATE=1 brew bundle dump \
+  --file="$temp_brewfile" \
+  --force \
+  --brews \
+  --casks \
+  --no-restart >/dev/null
+
+missing_formulae="$(comm -23 \
+  <(sed -nE 's/^brew "([^"]+)".*$/\1/p' "$temp_brewfile" | sort -u) \
+  <(sed -nE 's/^brew "([^"]+)".*$/\1/p' "$brewfile" | sort -u) || true)"
+
+missing_casks="$(comm -23 \
+  <(sed -nE 's/^cask "([^"]+)".*$/\1/p' "$temp_brewfile" | sort -u) \
+  <(sed -nE 's/^cask "([^"]+)".*$/\1/p' "$brewfile" | sort -u) || true)"
+
+formula_count=0
+cask_count=0
+
+if [[ -n "$missing_formulae" ]]; then
+  {
+    printf '\n# Added by ./bin/brew-sync for locally installed formulae.\n'
+    while IFS= read -r formula; do
+      [[ -n "$formula" ]] || continue
+      printf 'brew "%s"\n' "$formula"
+      formula_count=$((formula_count + 1))
+    done <<<"$missing_formulae"
+  } >>"$brewfile"
+fi
+
+if [[ -n "$missing_casks" ]]; then
+  {
+    printf '\n# Added by ./bin/brew-sync for locally installed casks.\n'
+    while IFS= read -r cask; do
+      [[ -n "$cask" ]] || continue
+      printf 'cask "%s"\n' "$cask"
+      cask_count=$((cask_count + 1))
+    done <<<"$missing_casks"
+  } >>"$brewfile"
+fi
+
+if [[ "$formula_count" -eq 0 && "$cask_count" -eq 0 ]]; then
+  echo "Brewfile already contains all top-level installed Homebrew formulae and casks."
+  exit 0
+fi
+
+echo "Added $formula_count formula(e) and $cask_count cask(s) to $brewfile"

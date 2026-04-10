@@ -53,3 +53,8 @@ mas "Keynote", id: 361285480
 mas "Numbers", id: 361304891
 mas "Pages", id: 361309726
 mas "Xcode", id: 497799835
+
+# Added by ./bin/brew-sync for locally installed formulae.
+brew "dockutil"
+brew "openssl@3"
+
