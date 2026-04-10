@@ -128,3 +128,6 @@ fi
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# OpenClaw Completion
+source "/Users/daviddegroot/.openclaw/completions/openclaw.zsh"
