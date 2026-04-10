@@ -1,0 +1,66 @@
+name: Cask Smoke Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cask-smoke-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Smoke ${{ matrix.cask }}
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cask: google-chrome
+            app_name: Google Chrome.app
+          - cask: iterm2
+            app_name: iTerm.app
+          - cask: sublime-text
+            app_name: Sublime Text.app
+          - cask: visual-studio-code
+            app_name: Visual Studio Code.app
+
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_INSTALL_CLEANUP: "1"
+
+    steps:
+      - name: Prepare isolated app directory
+        env:
+          APPDIR: ${{ runner.temp }}/Applications
+        run: mkdir -p "$APPDIR"
+
+      - name: Install and verify cask
+        env:
+          APPDIR: ${{ runner.temp }}/Applications
+          CASK: ${{ matrix.cask }}
+          APP_NAME: ${{ matrix.app_name }}
+        run: |
+          set -euo pipefail
+
+          app_path="$APPDIR/$APP_NAME"
+
+          cleanup() {
+            if brew list --cask "$CASK" >/dev/null 2>&1; then
+              brew uninstall --cask "$CASK"
+            fi
+          }
+          trap cleanup EXIT
+
+          brew install --cask --appdir="$APPDIR" "$CASK"
+
+          [[ -d "$app_path" ]]
+          codesign --verify --deep "$app_path"
