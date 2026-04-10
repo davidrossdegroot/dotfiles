@@ -52,9 +52,15 @@ jobs:
           set -euo pipefail
 
           app_path="$APPDIR/$APP_NAME"
+          was_installed_before=0
+          cleanup_cask=0
+
+          if brew list --cask "$CASK" >/dev/null 2>&1; then
+            was_installed_before=1
+          fi
 
           cleanup() {
-            if brew list --cask "$CASK" >/dev/null 2>&1; then
+            if [[ "$cleanup_cask" -eq 1 ]]; then
               brew uninstall --cask "$CASK"
             fi
           }
@@ -62,5 +68,14 @@ jobs:
 
           brew install --cask --appdir="$APPDIR" "$CASK"
 
-          [[ -d "$app_path" ]]
+          if [[ -d "$app_path" ]]; then
+            cleanup_cask=1
+          elif [[ "$was_installed_before" -eq 1 ]]; then
+            echo "::notice title=Skipped isolated verification::$CASK was already installed before this job, so Homebrew did not install it into $APPDIR"
+            exit 0
+          else
+            echo "::error title=Isolated app not found::Expected $app_path after installing $CASK"
+            exit 1
+          fi
+
           codesign --verify --deep "$app_path"
