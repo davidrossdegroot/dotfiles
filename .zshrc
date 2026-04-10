@@ -130,4 +130,6 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # OpenClaw Completion
-source "/Users/daviddegroot/.openclaw/completions/openclaw.zsh"
+if [[ -r "$HOME/.openclaw/completions/openclaw.zsh" ]]; then
+    source "$HOME/.openclaw/completions/openclaw.zsh"
+fi
