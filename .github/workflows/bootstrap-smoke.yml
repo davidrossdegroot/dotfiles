@@ -9,21 +9,6 @@ on:
         default: false
         required: false
   pull_request:
-    paths:
-      - ".github/workflows/bootstrap-smoke.yml"
-      - ".aliases"
-      - ".exports"
-      - ".extras"
-      - ".functions"
-      - ".gitconfig"
-      - ".zshrc"
-      - "Brewfile"
-      - "Brewfile.optional"
-      - "brew.sh"
-      - "move-in.sh"
-      - "setup-a-new-machine.sh"
-      - "bin/**"
-      - "dock/**"
 
 permissions:
   contents: read
