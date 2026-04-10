@@ -52,9 +52,16 @@ jobs:
           set -euo pipefail
 
           app_path="$APPDIR/$APP_NAME"
+          verify_app_path="$app_path"
+          was_installed_before=0
+          cleanup_cask=0
+
+          if brew list --cask "$CASK" >/dev/null 2>&1; then
+            was_installed_before=1
+          fi
 
           cleanup() {
-            if brew list --cask "$CASK" >/dev/null 2>&1; then
+            if [[ "$cleanup_cask" -eq 1 ]]; then
               brew uninstall --cask "$CASK"
             fi
           }
@@ -62,5 +69,17 @@ jobs:
 
           brew install --cask --appdir="$APPDIR" "$CASK"
 
-          [[ -d "$app_path" ]]
-          codesign --verify --deep "$app_path"
+          if [[ -d "$app_path" ]]; then
+            cleanup_cask=1
+          elif [[ "$was_installed_before" -eq 1 ]]; then
+            verify_app_path="/Applications/$APP_NAME"
+            if [[ ! -d "$verify_app_path" ]]; then
+              echo "::error title=Preinstalled app not found::Expected $verify_app_path for preinstalled $CASK when isolated install was skipped"
+              exit 1
+            fi
+          else
+            echo "::error title=Isolated app not found::Expected $app_path after installing $CASK"
+            exit 1
+          fi
+
+          codesign --verify --deep "$verify_app_path"
