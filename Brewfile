@@ -55,18 +55,6 @@ mas "Pages", id: 361309726
 mas "Xcode", id: 497799835
 
 # Added by ./bin/brew-sync for locally installed formulae.
-brew "automake"
-brew "bison"
-brew "cask"
-brew "cloudflared"
 brew "dockutil"
-brew "ghostscript"
-brew "libffi"
-brew "libyaml"
 brew "openssl@3"
-brew "pkgconf"
-brew "readline"
-brew "shared-mime-info"
-brew "xz"
-brew "zoxide"
 
