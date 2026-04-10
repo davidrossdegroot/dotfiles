@@ -44,6 +44,7 @@ Shell setup:
 - This repo expects `nvm` to use `~/.nvm`
 - `./setup-a-new-machine.sh` installs the current Node LTS release through `nvm`
 - Verify Node is available with `node --version` and `npm --version`
+- Repo-defined update aliases do not require `npm-check`; `update_brew_npm_gem` uses built-in `npm update -g` after Node is installed
 - Verify the AI coding CLIs with `codex --version` and `claude --version`
 - Run `codex login` and start `claude` once to finish authentication
 
