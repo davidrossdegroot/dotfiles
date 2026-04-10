@@ -70,6 +70,3 @@ brew "shared-mime-info"
 brew "xz"
 brew "zoxide"
 
-# Added by ./bin/brew-sync for locally installed casks.
-cask "codex"
-cask "codex-app"
