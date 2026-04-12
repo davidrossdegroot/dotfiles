@@ -4,6 +4,7 @@ brew "bat"
 brew "chruby"
 brew "coreutils"
 brew "direnv"
+brew "dockutil"
 brew "fd"
 brew "findutils"
 brew "fzf"
@@ -18,6 +19,7 @@ brew "moreutils"
 brew "mtr"
 brew "nano"
 brew "nvm"
+brew "openssl@3"
 brew "postgresql@16", restart_service: :changed
 brew "pyenv"
 brew "ranger"
@@ -54,7 +56,3 @@ mas "Keynote", id: 361285480
 mas "Numbers", id: 361304891
 mas "Pages", id: 361309726
 mas "Xcode", id: 497799835
-
-# Added by ./bin/brew-sync for locally installed formulae.
-brew "dockutil"
-brew "openssl@3"
