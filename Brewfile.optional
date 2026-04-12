@@ -13,5 +13,4 @@ brew "tmux"
 brew "zoxide"
 
 # Optional GUI apps discovered by ./bin/brew-sync.
-cask "codex"
 cask "codex-app"

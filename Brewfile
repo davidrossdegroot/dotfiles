@@ -2,6 +2,7 @@
 brew "bash-completion"
 brew "bat"
 brew "chruby"
+brew "codex"
 brew "coreutils"
 brew "direnv"
 brew "fd"
@@ -57,4 +58,3 @@ mas "Xcode", id: 497799835
 # Added by ./bin/brew-sync for locally installed formulae.
 brew "dockutil"
 brew "openssl@3"
-
