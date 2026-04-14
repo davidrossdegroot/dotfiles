@@ -138,7 +138,7 @@ Managed App Store installs currently include:
 - `Pages`
 - `Xcode`
 
-`Spectacle` is intentionally not in the `Brewfile` because the legacy cask is no longer available in Homebrew. Use `Rectangle` instead for window management.
+`Spectacle` is intentionally not in the `Brewfile` because the legacy cask is no longer available in Homebrew. If you want window management, install `Rectangle` manually (for example: `brew install --cask rectangle`, or install it from the App Store).
 
 ## Manual Follow-Up
 
