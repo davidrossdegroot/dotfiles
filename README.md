@@ -157,6 +157,8 @@ That helper is already called by `./setup-a-new-machine.sh`. It manages the shel
 
 `.zshrc` stays safe before and after those tools are installed because it only sources Oh My Zsh and plugin directories when they exist.
 
+Machine-local shell secrets and overrides belong in `~/.zshrc.local`. That file is sourced by `.zshrc`, ignored by git, and should not be committed.
+
 This repo expects `nvm` to use `~/.nvm`.
 
 `./setup-a-new-machine.sh` installs the current Node LTS release through Homebrew `nvm`, then installs:
