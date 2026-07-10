@@ -21,6 +21,17 @@ if [[ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
   else
     [[ -d "$NVM_DIR" ]] || mkdir -p "$NVM_DIR"
     \. "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+
+    nvm_default_version="$(nvm version default 2>/dev/null || true)"
+    case "$nvm_default_version" in
+      "" | "N/A" | "none" | "system") ;;
+      *)
+        PATH="$(nvm_strip_path "$PATH" "/bin")"
+        export PATH
+        nvm use --silent default >/dev/null
+        ;;
+    esac
+    unset nvm_default_version
   fi
 fi
 

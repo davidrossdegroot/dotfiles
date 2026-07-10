@@ -165,6 +165,8 @@ This repo expects `nvm` to use `~/.nvm`.
 
 - `@openai/codex`
 
+Run `update-node-lts` to install the latest Node LTS with `nvm`, reinstall global npm packages from the previous default/current Node when possible, and make that LTS version the default for new shells.
+
 The repo-defined update aliases do not require `npm-check`. After Node is installed, `update_brew_npm_gem` uses the built-in `npm update -g` flow for global npm packages.
 
 Claude Code is installed through the `claude-code` Homebrew cask in `Brewfile`.
