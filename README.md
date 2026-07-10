@@ -124,6 +124,7 @@ Notable cask installs include:
 - `1password`
 - `claude`
 - `claude-code`
+- `ghostty`
 - `google-chrome`
 - `iterm2`
 - `sublime-text`
