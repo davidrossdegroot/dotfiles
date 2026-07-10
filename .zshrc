@@ -5,7 +5,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 
 # load special files
-for file in ~/.{exports,aliases,functions,extras,bash_prompt}; do
+for file in ~/.{exports,aliases,functions,extras,zshrc.local,bash_prompt}; do
     [ -r "$file" ] && source "$file"
 done
 
@@ -133,7 +133,3 @@ fi
 if [[ -r "$HOME/.openclaw/completions/openclaw.zsh" ]]; then
     source "$HOME/.openclaw/completions/openclaw.zsh"
 fi
-
-# gog (gogcli) keyring — file backend, avoids macOS Keychain re-prompts
-export GOG_KEYRING_BACKEND='file'
-export GOG_KEYRING_PASSWORD='AEAwygpCXR_wYIH-hat2xgXa1SPwgsodU-qwDhO-'
