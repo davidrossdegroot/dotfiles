@@ -22,7 +22,6 @@ brew "nano"
 brew "nvm"
 brew "openssl@3"
 brew "postgresql@16", restart_service: :changed
-brew "pyenv"
 brew "ranger"
 brew "ripgrep"
 brew "ruby-install"
