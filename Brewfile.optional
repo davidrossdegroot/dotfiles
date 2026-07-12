@@ -11,6 +11,3 @@ brew "ncdu"
 brew "stow"
 brew "tmux"
 brew "zoxide"
-
-# Optional GUI apps discovered by ./bin/brew-sync.
-cask "codex-app"
