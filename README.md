@@ -122,6 +122,7 @@ This repo still uses `./move-in.sh` for its curated symlink flow, so `stow` is i
 Notable cask installs include:
 
 - `1password`
+- `chatgpt`
 - `claude`
 - `claude-code`
 - `ghostty`
