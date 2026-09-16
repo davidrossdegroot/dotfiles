@@ -70,8 +70,10 @@ Postgres:
 - Open a new shell before using `psql` or `pg_config`, since `.exports` adds Homebrew `libpq` to your `PATH`
 - If you stop the service later, restart it with `brew services start postgresql@16`
 
-Ruby references:
+Ruby setup:
 
-- https://github.com/postmodern/ruby-install
-- https://github.com/postmodern/chruby
+- `rv` is installed by the Brewfile; its zsh hook selects project Ruby versions automatically
+- Run `add-ruby` and enter an exact version (for example `4.0.2`) to install Ruby and set your default
+- Open a new shell, then verify `ruby --version`
+- https://github.com/spinel-coop/rv
 EOF

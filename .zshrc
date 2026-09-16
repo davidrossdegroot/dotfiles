@@ -92,6 +92,11 @@ if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
     source "$ZSH/oh-my-zsh.sh"
 fi
 
+# Select Ruby from project version files or ~/.ruby-version.
+if command -v rv >/dev/null 2>&1; then
+    eval "$(rv shell init zsh)"
+fi
+
 if command -v direnv >/dev/null 2>&1; then
     eval "$(direnv hook zsh)"
 fi

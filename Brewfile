@@ -1,7 +1,6 @@
 # Core bootstrap CLI tools. These are expected on every machine this repo sets up.
 brew "bash-completion"
 brew "bat"
-brew "chruby"
 brew "coreutils"
 brew "direnv"
 brew "dockutil"
@@ -24,7 +23,7 @@ brew "openssl@3"
 brew "postgresql@16", restart_service: :changed
 brew "ranger"
 brew "ripgrep"
-brew "ruby-install"
+brew "rv"
 brew "shellcheck"
 brew "shfmt"
 brew "tree"
