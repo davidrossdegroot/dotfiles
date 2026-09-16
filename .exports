@@ -27,8 +27,4 @@ fi
 # libpq for psql (if installed with Homebrew)
 [[ -d "$HOMEBREW_PREFIX/opt/libpq/bin" ]] && export PATH="$HOMEBREW_PREFIX/opt/libpq/bin:$PATH"
 
-# chruby (if installed with Homebrew)
-[ -r "$HOMEBREW_PREFIX/opt/chruby/share/chruby/chruby.sh" ] && source "$HOMEBREW_PREFIX/opt/chruby/share/chruby/chruby.sh"
-[ -r "$HOMEBREW_PREFIX/opt/chruby/share/chruby/auto.sh" ] && source "$HOMEBREW_PREFIX/opt/chruby/share/chruby/auto.sh"
-
 export PATH="$HOME/.local/bin:$PATH"

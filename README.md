@@ -257,7 +257,7 @@ Repo-only setup helpers now live in `script/`:
 - `setup-github-auth`
 - `setup-shell`
 
-`bin/add-ruby` installs a Ruby version with `ruby-install` and updates `~/.extras` so `chruby` selects it automatically.
+`bin/add-ruby` installs an exact Ruby version with `rv` and saves your default in `~/.ruby-version`. Project version files take precedence.
 `bin/capture-dock` snapshots the current Dock into `dock/layout.sh`.
 `bin/pull-request.sh` opens the GitHub compare view for the current branch.
 `bin/symlinkToDotfilesRepo.sh` is useful for moving files into the dotfiles repo and replacing them with symlinks.
@@ -265,6 +265,21 @@ Repo-only setup helpers now live in `script/`:
 `script/setup-dock` uses `dockutil` to recreate the Dock from `dock/layout.sh`.
 `script/setup-github-auth` authenticates GitHub with `gh`, sets SSH as the preferred git protocol, configures the `open` alias for `repo view --web`, tests the SSH connection, and switches this repo's `origin` remote to SSH.
 `script/setup-shell` installs or updates the Oh My Zsh framework and the specific plugins this repo enables in `.zshrc`.
+
+## Ruby
+
+[rv](https://github.com/spinel-coop/rv) installs precompiled Rubies and manages version switching through its zsh hook. The `Brewfile` installs rv; run `add-ruby` and enter an exact version (for example, `4.0.2`) to install Ruby and set your personal default. Open a new shell afterward.
+
+For a project, use `rv ruby pin 4.0.2`. Existing `.ruby-version` and `.tool-versions` files are supported. Outside projects, rv falls back to `~/.ruby-version`. Scripts can use `rv run ruby` without interactive shell integration.
+
+To migrate an existing chruby setup:
+
+1. Run `brew install rv`, then update this checkout and run `./move-in.sh` if your dotfiles are not already linked.
+2. Run `./bin/add-ruby` and enter `4.0.2` to retain this repo's previous default (or choose another version). This writes `~/.ruby-version` only after installation succeeds.
+3. Open a fresh terminal and verify `ruby --version` and `command -v ruby`.
+4. Run `bundle install` in your projects and reinstall any global gem CLIs you need. Existing Rubies in `~/.rubies` and their gems are left on disk; they are not copied into rv.
+
+Remove any personal chruby initialization from `~/.zshrc.local` if you added it there. Once the migration works, `brew uninstall chruby ruby-install` removes the old managers.
 
 ## Postgres
 
