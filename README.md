@@ -128,6 +128,7 @@ Notable cask installs include:
 - `ghostty`
 - `google-chrome`
 - `iterm2`
+- `logi-options+`
 - `sublime-text`
 - `visual-studio-code`
 
